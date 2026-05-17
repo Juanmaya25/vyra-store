@@ -308,7 +308,7 @@ export default function Page() {
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-8 border-t border-[var(--line)]">
             <p className="text-white/35 text-xs font-mono">© 2026 VYRA · Todos los derechos reservados</p>
-            <p className="text-white/35 text-xs font-mono">Hecho con visión de futuro</p>
+            <a href="./admin/" className="text-white/35 text-xs font-mono hover:text-[#C6FF3D] transition-colors">Panel admin →</a>
           </div>
         </div>
       </footer>
