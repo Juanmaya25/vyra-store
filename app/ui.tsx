@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check } from "lucide-react";
+import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check, LogOut } from "lucide-react";
 import { useCart } from "./cart";
+import { useAuth } from "./auth";
 import { fmt, CURRENCIES, type CurrencyCode } from "./products";
 
 const WHATSAPP = "573192859483";
@@ -75,6 +76,44 @@ export function WhatsAppFloat() {
   );
 }
 
+function Account() {
+  const { user, loginGoogle, logout } = useAuth();
+  const [menu, setMenu] = useState(false);
+  if (!user) {
+    return (
+      <button onClick={loginGoogle}
+        className="hidden sm:flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-medium hover:border-[#C6FF3D] transition-colors">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#C6FF3D" d="M21.35 11.1h-9.17v2.99h5.27c-.23 1.49-1.64 4.37-5.27 4.37-3.17 0-5.76-2.62-5.76-5.86s2.59-5.86 5.76-5.86c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.46 3.94 14.43 3 12.18 3 7.03 3 2.86 7.17 2.86 12.6S7.03 22.2 12.18 22.2c5.95 0 9.88-4.18 9.88-10.06 0-.68-.07-1.2-.71-1.04Z"/></svg>
+        Entrar
+      </button>
+    );
+  }
+  return (
+    <div className="relative">
+      <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 rounded-full glass px-2 py-1.5">
+        {user.avatar
+          ? <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />
+          : <span className="w-6 h-6 rounded-full bg-[#C6FF3D] text-[#0A0A0F] flex items-center justify-center text-xs font-bold">{user.name[0]?.toUpperCase()}</span>}
+        <span className="hidden sm:block text-xs font-medium max-w-[90px] truncate">{user.name}</span>
+      </button>
+      {menu && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setMenu(false)} />
+          <div className="absolute right-0 mt-2 z-50 glass rounded-2xl p-2 w-52">
+            <div className="px-3 py-2 border-b border-[var(--line)] mb-1">
+              <p className="text-xs text-white/40">Sesión iniciada</p>
+              <p className="text-sm truncate">{user.email}</p>
+            </div>
+            <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-white/70 hover:bg-white/5">
+              <LogOut size={14} /> Cerrar sesión
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function Nav({ base = "" }: { base?: string }) {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
@@ -103,6 +142,7 @@ export function Nav({ base = "" }: { base?: string }) {
               <a href={base + "./envios/"} className="navx text-white/80 hover:text-white">Envíos</a>
             </div>
             <div className="flex items-center gap-3">
+              <Account />
               <CurrencyPicker />
               <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
                 <ShoppingBag size={20} />
@@ -122,16 +162,22 @@ export function Nav({ base = "" }: { base?: string }) {
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { lines, changeQty, count, total, clear } = useCart();
   const [cur] = useCurrency();
+  const { user } = useAuth();
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [form, setForm] = useState({ cliente: "", email: "", pais: "Colombia" });
+  const [promo, setPromo] = useState(true);
   const [sending, setSending] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (user) setForm((f) => ({ ...f, cliente: f.cliente || user.name, email: f.email || user.email }));
+  }, [user]);
 
   async function placeOrder(e: React.FormEvent) {
     e.preventDefault();
     setSending(true);
     try {
-      const { supabase } = await import("./supabase");
+      const { supabase, addSubscriber } = await import("./supabase");
       const { data, error } = await supabase.from("orders").insert({
         cliente: form.cliente,
         email: form.email,
@@ -141,6 +187,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         estado: "Procesando",
       }).select("id").single();
       if (error) throw error;
+      if (promo) await addSubscriber(form.email, "checkout", form.cliente);
       setOrderId(data?.id ?? null);
       clear();
       setStep("done");
@@ -201,6 +248,13 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                     {["Colombia", "USA", "México", "España", "Chile", "Perú", "Argentina", "Brasil"].map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </div>
+                <label className="flex items-start gap-3 glass rounded-xl p-4 cursor-pointer">
+                  <input type="checkbox" checked={promo} onChange={(e) => setPromo(e.target.checked)}
+                    className="mt-0.5 accent-[#C6FF3D] w-4 h-4" />
+                  <span className="text-xs text-white/55 leading-relaxed">
+                    Quiero recibir <span className="text-[#C6FF3D]">ofertas exclusivas y novedades</span> de VYRA por correo. Puedo cancelar cuando quiera.
+                  </span>
+                </label>
                 <div className="glass rounded-xl p-4 flex justify-between text-sm">
                   <span className="text-white/55">Total a pagar</span>
                   <span className="font-display font-bold">{fmt(total, cur)}</span>
@@ -383,7 +437,7 @@ export function Newsletter() {
         {done ? (
           <p className="text-[#C6FF3D] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); if (email) setDone(true); }}
+          <form onSubmit={async (e) => { e.preventDefault(); if (email) { const { addSubscriber } = await import("./supabase"); await addSubscriber(email, "newsletter"); setDone(true); } }}
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com"
               className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#C6FF3D]" />
