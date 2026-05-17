@@ -120,8 +120,37 @@ export function Nav({ base = "" }: { base?: string }) {
 }
 
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { lines, changeQty, count, total } = useCart();
+  const { lines, changeQty, count, total, clear } = useCart();
   const [cur] = useCurrency();
+  const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
+  const [form, setForm] = useState({ cliente: "", email: "", pais: "Colombia" });
+  const [sending, setSending] = useState(false);
+  const [orderId, setOrderId] = useState<number | null>(null);
+
+  async function placeOrder(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    try {
+      const { supabase } = await import("./supabase");
+      const { data, error } = await supabase.from("orders").insert({
+        cliente: form.cliente,
+        email: form.email,
+        pais: form.pais,
+        items: lines.map((l) => ({ name: l.name, qty: l.qty, variant: l.variant, priceUSD: l.priceUSD })),
+        total_usd: total,
+        estado: "Procesando",
+      }).select("id").single();
+      if (error) throw error;
+      setOrderId(data?.id ?? null);
+      clear();
+      setStep("done");
+    } catch {
+      alert("No se pudo registrar el pedido. Revisa que el esquema SQL se haya ejecutado en Supabase.");
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <AnimatePresence>
       {open && (
@@ -131,9 +160,59 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}>
             <div className="flex items-center justify-between p-6 border-b border-[var(--line)]">
-              <p className="font-display font-bold text-lg">Tu carrito ({count})</p>
-              <button onClick={onClose} className="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10"><X size={18} /></button>
+              <p className="font-display font-bold text-lg">
+                {step === "cart" && `Tu carrito (${count})`}
+                {step === "checkout" && "Tus datos"}
+                {step === "done" && "¡Pedido confirmado!"}
+              </p>
+              <button onClick={() => { onClose(); setStep("cart"); }} className="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10"><X size={18} /></button>
             </div>
+
+            {step === "done" && (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-[#C6FF3D]/15 flex items-center justify-center mb-5">
+                  <Check size={30} className="text-[#C6FF3D]" />
+                </div>
+                <p className="font-display font-black text-xl">¡Gracias por tu compra!</p>
+                <p className="text-white/50 text-sm mt-2">Tu pedido <span className="text-[#C6FF3D] font-mono">#VY-{orderId}</span> fue registrado. Te contactaremos por correo para coordinar el pago y envío.</p>
+                <button onClick={() => { onClose(); setStep("cart"); }} className="btn-ghost px-6 py-3 rounded-full mt-7">Seguir comprando</button>
+              </div>
+            )}
+
+            {step === "checkout" && (
+              <form onSubmit={placeOrder} className="flex-1 overflow-y-auto p-6 space-y-4">
+                <button type="button" onClick={() => setStep("cart")} className="text-white/45 text-sm font-mono hover:text-[#C6FF3D]">← Volver al carrito</button>
+                {[
+                  { k: "cliente", label: "Nombre completo", type: "text", ph: "Juan García" },
+                  { k: "email", label: "Correo electrónico", type: "email", ph: "juan@correo.com" },
+                ].map((f) => (
+                  <div key={f.k}>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-white/40 mb-1.5">{f.label}</label>
+                    <input type={f.type} required value={form[f.k as keyof typeof form]}
+                      onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
+                      placeholder={f.ph}
+                      className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C6FF3D]" />
+                  </div>
+                ))}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-white/40 mb-1.5">País</label>
+                  <select value={form.pais} onChange={(e) => setForm({ ...form, pais: e.target.value })}
+                    className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C6FF3D]">
+                    {["Colombia", "USA", "México", "España", "Chile", "Perú", "Argentina", "Brasil"].map((p) => <option key={p}>{p}</option>)}
+                  </select>
+                </div>
+                <div className="glass rounded-xl p-4 flex justify-between text-sm">
+                  <span className="text-white/55">Total a pagar</span>
+                  <span className="font-display font-bold">{fmt(total, cur)}</span>
+                </div>
+                <button type="submit" disabled={sending} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-60">
+                  {sending ? "Registrando..." : <>Confirmar pedido <ChevronRight size={18} /></>}
+                </button>
+                <p className="text-center text-white/35 text-xs font-mono">Te contactaremos para coordinar el pago (Wompi · Stripe · contra entrega)</p>
+              </form>
+            )}
+
+            {step === "cart" && (
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {lines.length === 0 && (
                 <div className="text-center py-20">
@@ -159,13 +238,14 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 </div>
               ))}
             </div>
-            {lines.length > 0 && (
+            )}
+            {step === "cart" && lines.length > 0 && (
               <div className="p-6 border-t border-[var(--line)]">
                 <div className="flex justify-between mb-4">
                   <span className="text-white/55">Total</span>
                   <span className="font-display font-black text-2xl">{fmt(total, cur)}</span>
                 </div>
-                <button className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2">
+                <button onClick={() => setStep("checkout")} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2">
                   Finalizar compra <ChevronRight size={18} />
                 </button>
                 <p className="text-center text-white/35 text-xs mt-3 font-mono">Pago seguro · Wompi · Stripe · Contra entrega</p>

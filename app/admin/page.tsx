@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -98,12 +98,40 @@ export default function Admin() {
     );
   }
 
+  return <Dashboard />;
+}
+
+function Dashboard() {
+  const [realOrders, setRealOrders] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { supabase } = await import("../supabase");
+        const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50);
+        setRealOrders(data ?? []);
+      } catch { setRealOrders([]); }
+    })();
+  }, []);
+
+  const liveCount = realOrders?.length ?? 0;
+  const liveRevenue = (realOrders ?? []).reduce((s, o) => s + Number(o.total_usd || 0), 0);
+
   const kpis = [
-    { icon: DollarSign, label: "Ingresos del mes", value: "$82.4M COP", delta: "+23%", up: true },
-    { icon: ShoppingBag, label: "Pedidos", value: "1,284", delta: "+18%", up: true },
+    { icon: DollarSign, label: "Ingresos reales (USD)", value: liveCount ? `$${liveRevenue.toLocaleString()}` : "$82.4M COP", delta: liveCount ? "EN VIVO" : "+23%", up: true },
+    { icon: ShoppingBag, label: "Pedidos reales", value: liveCount ? String(liveCount) : "1,284", delta: liveCount ? "EN VIVO" : "+18%", up: true },
     { icon: Users, label: "Clientes nuevos", value: "642", delta: "+31%", up: true },
     { icon: TrendingUp, label: "Tasa conversión", value: "3.8%", delta: "-0.4%", up: false },
   ];
+
+  const liveRows = (realOrders ?? []).map((o) => ({
+    id: `#VY-${o.id}`,
+    cliente: o.cliente,
+    pais: o.pais,
+    total: `$${Number(o.total_usd).toLocaleString()} USD`,
+    estado: o.estado,
+  }));
+  const rows = liveRows.length ? liveRows : orders;
 
   return (
     <div className="relative min-h-screen">
@@ -240,7 +268,12 @@ export default function Admin() {
 
         {/* Orders */}
         <div className="glass rounded-3xl p-6">
-          <p className="font-display font-bold mb-5">Pedidos recientes</p>
+          <p className="font-display font-bold mb-5 flex items-center gap-2">
+            Pedidos recientes
+            {liveRows.length > 0
+              ? <span className="text-[10px] font-mono bg-[#C6FF3D]/15 text-[#C6FF3D] px-2 py-0.5 rounded-full">● EN VIVO · Supabase</span>
+              : <span className="text-[10px] font-mono text-white/40">(demo · sin pedidos reales aún)</span>}
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -253,14 +286,14 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {orders.map((o) => (
-                  <tr key={o.id} className="border-b border-[var(--line)] last:border-0">
+                {rows.map((o, i) => (
+                  <tr key={i} className="border-b border-[var(--line)] last:border-0">
                     <td className="py-3.5 font-mono text-[#C6FF3D]">{o.id}</td>
                     <td className="py-3.5">{o.cliente}</td>
                     <td className="py-3.5 text-white/60">{o.pais}</td>
                     <td className="py-3.5 font-mono">{o.total}</td>
                     <td className="py-3.5">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado]}`}>{o.estado}</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>{o.estado}</span>
                     </td>
                   </tr>
                 ))}
