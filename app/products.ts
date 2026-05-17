@@ -153,14 +153,108 @@ export const PRODUCTS: Product[] = [
       { author: "Kevin D.", rating: 5, date: "18 mar 2026", text: "Perfect for travel. Folds flat and charges fast." },
     ],
   },
+  {
+    id: "shadow-hoodie",
+    name: "VYRA Shadow Hoodie",
+    category: "Moda",
+    tagline: "Algodón premium · Oversize · Unisex",
+    priceUSD: 49,
+    compareUSD: 99,
+    images: [u("1556821840-3a63f95609a7"), u("1620799140408-edc6dcb6d633"), u("1578768079052-aa76e52ff62e")],
+    rating: 4.8,
+    reviewsCount: 1934,
+    sold: 9120,
+    badge: "TENDENCIA",
+    colors: [{ name: "Negro", hex: "#101015" }, { name: "Crema", hex: "#E8E1D2" }, { name: "Verde", hex: "#3a4a32" }],
+    sizes: ["S", "M", "L", "XL"],
+    description:
+      "Hoodie de algodón pesado con caída oversize perfecta. Interior afelpado, cordones metálicos y bordado minimalista. El básico premium que faltaba en tu clóset.",
+    reviews: [
+      { author: "Mariana T.", rating: 5, date: "13 abr 2026", text: "La tela es gruesa y suave, calidad real. Me quedó perfecto el oversize.", photo: u("1503342217505-b0a15ec3261c") },
+      { author: "Jhon B.", rating: 5, date: "6 abr 2026", text: "Mejor hoodie que tengo, y he comprado caros. Recomendadísimo." },
+      { author: "Emma W.", rating: 4, date: "29 mar 2026", text: "Love it, super comfy. Runs slightly large which I prefer." },
+    ],
+  },
+  {
+    id: "nova-projector",
+    name: "VYRA Nova Mini Proyector",
+    category: "Tecnología",
+    tagline: "1080p · WiFi · 200\" · Portátil",
+    priceUSD: 96,
+    compareUSD: 199,
+    images: [u("1626379953822-baec19c3accd"), u("1593784991095-a205069470b6"), u("1517604931442-7e0c8ed2963c")],
+    rating: 4.6,
+    reviewsCount: 1107,
+    sold: 4580,
+    colors: [{ name: "Blanco", hex: "#ECECEC" }],
+    description:
+      "Proyector portátil Full HD con WiFi y Bluetooth. Imagen de hasta 200 pulgadas, ideal para cine en casa o presentaciones. Conecta tu teléfono en segundos.",
+    reviews: [
+      { author: "Andrea P.", rating: 5, date: "10 abr 2026", text: "Convertí mi sala en un cine. La imagen se ve increíble de noche." },
+      { author: "Luis F.", rating: 4, date: "24 mar 2026", text: "Buen brillo para el precio. Mejor usarlo en cuarto oscuro." },
+    ],
+  },
+  {
+    id: "titan-bottle",
+    name: "VYRA Titan Bottle 1L",
+    category: "Moda",
+    tagline: "Acero · 24h frío · Térmica",
+    priceUSD: 29,
+    compareUSD: 59,
+    images: [u("1602143407151-7111542de6e8"), u("1523362628745-0c100150b504"), u("1610824352934-c10d87b700cc")],
+    rating: 4.9,
+    reviewsCount: 2890,
+    sold: 15670,
+    badge: "MÁS VENDIDO",
+    colors: [{ name: "Negro mate", hex: "#15151c" }, { name: "Lima", hex: "#C6FF3D" }, { name: "Arena", hex: "#C9B79C" }],
+    description:
+      "Botella térmica de acero inoxidable que mantiene tus bebidas frías 24h o calientes 12h. Diseño antigoteo, libre de BPA y acabado premium antideslizante.",
+    reviews: [
+      { author: "Camilo R.", rating: 5, date: "12 abr 2026", text: "El agua sigue helada al otro día, no exageran. Calidad top." },
+      { author: "Sara N.", rating: 5, date: "2 abr 2026", text: "La uso en el gym y la oficina, se ve elegante y no gotea nada." },
+      { author: "Paul G.", rating: 5, date: "27 mar 2026", text: "Keeps ice for over a day. Best bottle I've owned." },
+    ],
+  },
+  {
+    id: "glow-ring",
+    name: "VYRA Glow Ring Light Pro",
+    category: "Tecnología",
+    tagline: "18\" · 3 tonos · Trípode 2m",
+    priceUSD: 42,
+    compareUSD: 85,
+    images: [u("1610792516307-bd87b8e2ce93"), u("1598550476439-6847785fcea6"), u("1565130838609-c3a86655db61")],
+    rating: 4.7,
+    reviewsCount: 1456,
+    sold: 7210,
+    colors: [{ name: "Negro", hex: "#15151c" }],
+    description:
+      "Aro de luz profesional de 18\" con 3 temperaturas de color y 10 niveles de intensidad. Incluye trípode de 2m y soporte para teléfono. Ideal para creadores de contenido.",
+    reviews: [
+      { author: "Daniela M.", rating: 5, date: "9 abr 2026", text: "Mis videos cambiaron totalmente, la luz es pareja y bonita." },
+      { author: "Chris T.", rating: 4, date: "21 mar 2026", text: "Great light, sturdy tripod. App control would be a nice plus." },
+    ],
+  },
 ];
 
 export const CATEGORIES = ["Todos", "Tecnología", "Moda"] as const;
 
-export const USD_TO_COP = 4050;
+/* ── Multi-país / multi-moneda ── */
+export type CurrencyCode = "COP" | "USD" | "MXN" | "EUR" | "CLP" | "PEN" | "ARS" | "BRL";
 
-export function fmt(priceUSD: number, currency: "USD" | "COP") {
-  if (currency === "USD") return `$${priceUSD.toFixed(0)} USD`;
-  const cop = Math.round((priceUSD * USD_TO_COP) / 1000) * 1000;
-  return `$${cop.toLocaleString("es-CO")} COP`;
+export const CURRENCIES: Record<CurrencyCode, { flag: string; label: string; rate: number; locale: string; round: number }> = {
+  COP: { flag: "🇨🇴", label: "Colombia", rate: 4050, locale: "es-CO", round: 1000 },
+  USD: { flag: "🇺🇸", label: "USA", rate: 1, locale: "en-US", round: 1 },
+  MXN: { flag: "🇲🇽", label: "México", rate: 17, locale: "es-MX", round: 5 },
+  EUR: { flag: "🇪🇸", label: "España", rate: 0.92, locale: "es-ES", round: 1 },
+  CLP: { flag: "🇨🇱", label: "Chile", rate: 950, locale: "es-CL", round: 100 },
+  PEN: { flag: "🇵🇪", label: "Perú", rate: 3.7, locale: "es-PE", round: 1 },
+  ARS: { flag: "🇦🇷", label: "Argentina", rate: 980, locale: "es-AR", round: 100 },
+  BRL: { flag: "🇧🇷", label: "Brasil", rate: 5.1, locale: "pt-BR", round: 1 },
+};
+
+export function fmt(priceUSD: number, currency: CurrencyCode) {
+  const c = CURRENCIES[currency] ?? CURRENCIES.USD;
+  const raw = priceUSD * c.rate;
+  const val = Math.round(raw / c.round) * c.round;
+  return `$${val.toLocaleString(c.locale)} ${currency}`;
 }

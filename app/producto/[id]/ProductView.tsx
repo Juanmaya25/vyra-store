@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw } from "lucide-react";
+import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw, Heart, Flame, Eye } from "lucide-react";
 import type { Product } from "../../products";
 import { fmt } from "../../products";
-import { useCart } from "../../cart";
+import { useCart, useWishlist } from "../../cart";
 import { Nav, Footer, Stars, WhatsAppFloat, useCurrency } from "../../ui";
 
 export default function ProductView({ product, related }: { product: Product; related: Product[] }) {
   const { add } = useCart();
+  const wish = useWishlist();
   const [cur] = useCurrency();
+  const stock = 3 + (product.id.length % 7);
+  const viewing = 8 + (product.reviewsCount % 23);
   const [img, setImg] = useState(0);
   const [variant, setVariant] = useState(product.colors?.[0]?.name ?? product.sizes?.[0] ?? "Único");
   const [added, setAdded] = useState(false);
@@ -51,8 +54,23 @@ export default function ProductView({ product, related }: { product: Product; re
             {product.badge && (
               <span className="bg-[#C6FF3D] text-[#0A0A0F] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase">{product.badge}</span>
             )}
-            <h1 className="font-display font-black text-3xl sm:text-4xl mt-3">{product.name}</h1>
+            <div className="flex items-start justify-between gap-4 mt-3">
+              <h1 className="font-display font-black text-3xl sm:text-4xl">{product.name}</h1>
+              <button onClick={() => wish.toggle(product.id)} aria-label="Favorito"
+                className="w-11 h-11 rounded-full glass flex items-center justify-center shrink-0 hover:scale-110 transition-transform">
+                <Heart size={18} className={wish.has(product.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-white/70"} />
+              </button>
+            </div>
             <p className="text-white/50 mt-2">{product.tagline}</p>
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              <span className="flex items-center gap-1.5 text-xs font-mono bg-[#FF4D8D]/10 text-[#FF4D8D] rounded-full px-3 py-1.5">
+                <Flame size={13} /> Solo {stock} en stock
+              </span>
+              <span className="flex items-center gap-1.5 text-xs font-mono bg-[#C6FF3D]/10 text-[#C6FF3D] rounded-full px-3 py-1.5">
+                <Eye size={13} /> {viewing} personas viendo ahora
+              </span>
+            </div>
 
             <div className="flex items-center gap-3 mt-4 glass rounded-2xl px-4 py-3 w-fit">
               <Stars value={product.rating} size={16} />

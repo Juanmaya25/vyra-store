@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle } from "lucide-react";
+import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check } from "lucide-react";
 import { useCart } from "./cart";
-import { fmt } from "./products";
+import { fmt, CURRENCIES, type CurrencyCode } from "./products";
 
 const WHATSAPP = "573192859483";
 
-export type Currency = "USD" | "COP";
+export type Currency = CurrencyCode;
 
 export function useCurrency(): [Currency, (c: Currency) => void] {
   const [cur, setCur] = useState<Currency>("COP");
@@ -21,6 +21,34 @@ export function useCurrency(): [Currency, (c: Currency) => void] {
   }, []);
   const set = (c: Currency) => { localStorage.setItem("vyra_cur", c); window.dispatchEvent(new Event("vyra_cur_change")); };
   return [cur, set];
+}
+
+function CurrencyPicker() {
+  const [cur, setCur] = useCurrency();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-mono hover:border-[#C6FF3D] transition-colors">
+        <Globe size={13} className="text-[#C6FF3D]" />
+        {CURRENCIES[cur].flag} {cur}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 mt-2 z-50 glass rounded-2xl p-2 w-44 max-h-72 overflow-y-auto">
+            {(Object.keys(CURRENCIES) as CurrencyCode[]).map((c) => (
+              <button key={c} onClick={() => { setCur(c); setOpen(false); }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${cur === c ? "bg-[#C6FF3D]/15 text-[#C6FF3D]" : "hover:bg-white/5 text-white/70"}`}>
+                <span>{CURRENCIES[c].flag} {CURRENCIES[c].label}</span>
+                {cur === c ? <Check size={14} /> : <span className="font-mono text-xs text-white/40">{c}</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export function Stars({ value, size = 14 }: { value: number; size?: number }) {
@@ -49,7 +77,6 @@ export function WhatsAppFloat() {
 
 export function Nav({ base = "" }: { base?: string }) {
   const { count } = useCart();
-  const [cur, setCur] = useCurrency();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -76,14 +103,7 @@ export function Nav({ base = "" }: { base?: string }) {
               <a href={base + "./envios/"} className="navx text-white/80 hover:text-white">Envíos</a>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex rounded-full border border-[var(--line)] overflow-hidden text-xs font-mono">
-                {(["COP", "USD"] as Currency[]).map((c) => (
-                  <button key={c} onClick={() => setCur(c)}
-                    className={`px-3 py-1.5 transition-colors ${cur === c ? "bg-[#C6FF3D] text-[#0A0A0F] font-bold" : "text-white/60 hover:text-white"}`}>
-                    {c}
-                  </button>
-                ))}
-              </div>
+              <CurrencyPicker />
               <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
                 <ShoppingBag size={20} />
                 {count > 0 && (
@@ -184,12 +204,114 @@ export function Footer({ base = "" }: { base?: string }) {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-8 border-t border-[var(--line)]">
+        <div className="flex flex-wrap items-center gap-3 mt-12 pt-8 border-t border-[var(--line)]">
+          <span className="text-white/35 text-xs font-mono mr-2">Pago 100% seguro:</span>
+          {["VISA", "MASTERCARD", "PSE", "NEQUI", "PAYPAL", "STRIPE"].map((m) => (
+            <span key={m} className="glass rounded-lg px-3 py-1.5 text-[10px] font-mono font-bold text-white/60">{m}</span>
+          ))}
+        </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
           <p className="text-white/35 text-xs font-mono">© 2026 VYRA · Todos los derechos reservados</p>
-          <p className="text-white/35 text-xs font-mono">Hecho con visión de futuro</p>
+          <p className="text-white/35 text-xs font-mono">Envíos a 8 países · Hecho con visión de futuro</p>
         </div>
       </div>
     </footer>
+  );
+}
+
+/* ── Social proof toasts ── */
+const PROOF = [
+  ["Camila", "Bogotá", "VYRA Aura Buds Pro"],
+  ["Miguel", "Medellín", "VYRA Vortex Runner"],
+  ["Sofía", "Ciudad de México", "VYRA Shadow Hoodie"],
+  ["James", "Miami", "VYRA Pulse Smartwatch"],
+  ["Lucía", "Cali", "VYRA Titan Bottle"],
+  ["Mateo", "Santiago", "VYRA Nova Proyector"],
+];
+export function SocialProof() {
+  const [show, setShow] = useState(false);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    let i = 0;
+    const cycle = () => {
+      setIdx(i % PROOF.length); i++;
+      setShow(true);
+      setTimeout(() => setShow(false), 4500);
+    };
+    const first = setTimeout(cycle, 6000);
+    const iv = setInterval(cycle, 13000);
+    return () => { clearTimeout(first); clearInterval(iv); };
+  }, []);
+  const [n, c, p] = PROOF[idx];
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
+          className="fixed bottom-6 left-6 z-40 glass rounded-2xl p-4 pr-6 flex items-center gap-3 max-w-xs">
+          <span className="w-9 h-9 rounded-full bg-[#C6FF3D]/15 flex items-center justify-center text-lg">🛍️</span>
+          <div>
+            <p className="text-sm font-medium leading-tight"><strong>{n}</strong> de {c}</p>
+            <p className="text-white/50 text-xs mt-0.5">acaba de comprar {p}</p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ── FAQ ── */
+const FAQS = [
+  ["¿A qué países envían?", "Enviamos a Colombia, USA, México, España, Chile, Perú, Argentina y Brasil, con seguimiento en tiempo real."],
+  ["¿Cuánto tarda el envío?", "Colombia 3-7 días hábiles, internacional 7-14 días. Despacho dentro de las 48h tras confirmar el pedido."],
+  ["¿Puedo pagar contra entrega?", "Sí, disponible en las principales ciudades de Colombia. Pagas en efectivo al recibir."],
+  ["¿Tienen garantía?", "Sí, Garantía VYRA de 30 días. Si hay defecto de fábrica, cambiamos o devolvemos tu dinero."],
+  ["¿Las reseñas son reales?", "Sí, importamos las calificaciones y reseñas reales verificadas de los productos."],
+];
+export function Faq() {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section className="relative z-10 max-w-3xl mx-auto px-6 pb-24">
+      <div className="text-center mb-10">
+        <p className="font-mono text-xs uppercase tracking-widest text-[#C6FF3D] mb-2">// Dudas</p>
+        <h2 className="font-display font-black text-4xl">Preguntas frecuentes</h2>
+      </div>
+      <div className="space-y-3">
+        {FAQS.map(([q, a], i) => (
+          <div key={i} className="glass rounded-2xl overflow-hidden">
+            <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-4 p-5 text-left">
+              <span className="font-medium">{q}</span>
+              {open === i ? <Minus size={18} className="text-[#C6FF3D] shrink-0" /> : <Plus size={18} className="text-[#C6FF3D] shrink-0" />}
+            </button>
+            {open === i && <div className="px-5 pb-5 text-white/55 text-sm leading-relaxed">{a}</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Newsletter ── */
+export function Newsletter() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+  return (
+    <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
+      <div className="glass rounded-3xl p-10 sm:p-14 text-center glow-lime">
+        <h2 className="font-display font-black text-3xl sm:text-4xl mb-3">Sé el primero en el próximo drop</h2>
+        <p className="text-white/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#C6FF3D] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
+        {done ? (
+          <p className="text-[#C6FF3D] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
+        ) : (
+          <form onSubmit={(e) => { e.preventDefault(); if (email) setDone(true); }}
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com"
+              className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#C6FF3D]" />
+            <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 10%</button>
+          </form>
+        )}
+      </div>
+    </section>
   );
 }
 

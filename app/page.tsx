@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, ArrowRight, Truck, ShieldCheck, RefreshCw, Zap, Plus } from "lucide-react";
+import { Search, ArrowRight, Truck, ShieldCheck, RefreshCw, Zap, Plus, Heart } from "lucide-react";
 import { PRODUCTS, CATEGORIES, fmt } from "./products";
-import { Nav, Footer, Stars, WhatsAppFloat, useCurrency } from "./ui";
+import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, Faq, Newsletter, SocialProof } from "./ui";
+import { useWishlist } from "./cart";
 
 function useReveal() {
   useEffect(() => {
@@ -21,15 +22,21 @@ export default function Page() {
   const [cur] = useCurrency();
   const [cat, setCat] = useState("Todos");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("destacados");
+  const wish = useWishlist();
   useReveal();
 
-  const filtered = useMemo(
-    () => PRODUCTS.filter(
+  const filtered = useMemo(() => {
+    const list = PRODUCTS.filter(
       (p) => (cat === "Todos" || p.category === cat) &&
              (query === "" || p.name.toLowerCase().includes(query.toLowerCase()))
-    ),
-    [cat, query]
-  );
+    );
+    if (sort === "precio-asc") list.sort((a, b) => a.priceUSD - b.priceUSD);
+    if (sort === "precio-desc") list.sort((a, b) => b.priceUSD - a.priceUSD);
+    if (sort === "rating") list.sort((a, b) => b.rating - a.rating);
+    if (sort === "vendidos") list.sort((a, b) => b.sold - a.sold);
+    return list;
+  }, [cat, query, sort]);
 
   return (
     <div className="relative min-h-screen">
@@ -107,6 +114,14 @@ export default function Page() {
                 </button>
               ))}
             </div>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}
+              className="glass rounded-full px-4 py-2.5 text-sm outline-none focus:border-[#C6FF3D] cursor-pointer">
+              <option value="destacados">Destacados</option>
+              <option value="precio-asc">Precio: menor a mayor</option>
+              <option value="precio-desc">Precio: mayor a menor</option>
+              <option value="rating">Mejor calificados</option>
+              <option value="vendidos">Más vendidos</option>
+            </select>
           </div>
         </div>
 
@@ -119,7 +134,13 @@ export default function Page() {
                   {p.badge && (
                     <span className="absolute top-4 left-4 bg-[#C6FF3D] text-[#0A0A0F] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider">{p.badge}</span>
                   )}
-                  <span className="absolute top-4 right-4 glass rounded-full px-2.5 py-1 text-[10px] font-mono">{p.sold.toLocaleString()} vendidos</span>
+                  <button
+                    onClick={(e) => { e.preventDefault(); wish.toggle(p.id); }}
+                    aria-label="Favorito"
+                    className="absolute top-3 right-3 w-9 h-9 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                    <Heart size={16} className={wish.has(p.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-white/70"} />
+                  </button>
+                  <span className="absolute bottom-3 right-3 glass rounded-full px-2.5 py-1 text-[10px] font-mono">{p.sold.toLocaleString()} vendidos</span>
                 </div>
                 <div className="p-5">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">{p.category}</p>
@@ -166,8 +187,11 @@ export default function Page() {
         </div>
       </section>
 
+      <Newsletter />
+      <Faq />
       <Footer />
       <WhatsAppFloat />
+      <SocialProof />
     </div>
   );
 }

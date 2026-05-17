@@ -45,3 +45,31 @@ export function useCart() {
   const total = lines.reduce((s, l) => s + l.priceUSD * l.qty, 0);
   return { lines, add, changeQty, clear, count, total };
 }
+
+/* ── Wishlist ── */
+const WKEY = "vyra_wish";
+const WEVT = "vyra_wish_change";
+
+function wread(): string[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(WKEY) || "[]"); } catch { return []; }
+}
+
+export function useWishlist() {
+  const [ids, setIds] = useState<string[]>([]);
+  useEffect(() => {
+    setIds(wread());
+    const sync = () => setIds(wread());
+    window.addEventListener(WEVT, sync);
+    window.addEventListener("storage", sync);
+    return () => { window.removeEventListener(WEVT, sync); window.removeEventListener("storage", sync); };
+  }, []);
+  const toggle = (id: string) => {
+    const c = wread();
+    const next = c.includes(id) ? c.filter((x) => x !== id) : [...c, id];
+    localStorage.setItem(WKEY, JSON.stringify(next));
+    window.dispatchEvent(new Event(WEVT));
+  };
+  const has = (id: string) => ids.includes(id);
+  return { ids, toggle, has, count: ids.length };
+}
