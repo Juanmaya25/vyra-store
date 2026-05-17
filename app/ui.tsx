@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check, LogOut } from "lucide-react";
+import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check, LogOut, Package } from "lucide-react";
 import { useCart } from "./cart";
 import { useAuth } from "./auth";
 import { fmt, CURRENCIES, type CurrencyCode } from "./products";
@@ -104,6 +104,9 @@ function Account() {
               <p className="text-xs text-white/40">Sesión iniciada</p>
               <p className="text-sm truncate">{user.email}</p>
             </div>
+            <a href="/vyra-store/cuenta/" className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-white/70 hover:bg-white/5">
+              <Package size={14} /> Mis pedidos
+            </a>
             <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-white/70 hover:bg-white/5">
               <LogOut size={14} /> Cerrar sesión
             </button>

@@ -125,13 +125,24 @@ function Dashboard() {
   ];
 
   const liveRows = (realOrders ?? []).map((o) => ({
+    rawId: o.id as number,
     id: `#VY-${o.id}`,
     cliente: o.cliente,
     pais: o.pais,
     total: `$${Number(o.total_usd).toLocaleString()} USD`,
     estado: o.estado,
   }));
-  const rows = liveRows.length ? liveRows : orders;
+  const rows: any[] = liveRows.length ? liveRows : orders;
+
+  async function setStatus(rawId: number, estado: string) {
+    setRealOrders((prev) => (prev ?? []).map((o) => (o.id === rawId ? { ...o, estado } : o)));
+    try {
+      const { supabase } = await import("../supabase");
+      await supabase.from("orders").update({ estado }).eq("id", rawId);
+    } catch {
+      alert("No se pudo actualizar. Ejecuta el SQL de permiso de update en Supabase.");
+    }
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -293,7 +304,16 @@ function Dashboard() {
                     <td className="py-3.5 text-white/60">{o.pais}</td>
                     <td className="py-3.5 font-mono">{o.total}</td>
                     <td className="py-3.5">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>{o.estado}</span>
+                      {o.rawId ? (
+                        <select value={o.estado} onChange={(e) => setStatus(o.rawId, e.target.value)}
+                          className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>
+                          {["Procesando", "Enviado", "Entregado", "Cancelado"].map((s) => (
+                            <option key={s} value={s} className="bg-[#14141E] text-white">{s}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>{o.estado}</span>
+                      )}
                     </td>
                   </tr>
                 ))}
