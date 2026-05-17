@@ -19,6 +19,7 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://juanmaya25.github.io/vyra-store"),
   title: "VYRA — El futuro, a tu puerta",
   description:
     "VYRA · Tecnología y moda de nueva generación. Productos curados, envíos a Colombia y USA. El futuro llegó.",
