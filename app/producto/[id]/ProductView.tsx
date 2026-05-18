@@ -29,8 +29,8 @@ export default function ProductView({ product, related }: { product: Product; re
       <Nav base="../../" />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        <nav className="text-xs font-mono text-white/40 mb-8">
-          <a href="../../" className="hover:text-[#2BE08A]">Inicio</a> / <span className="text-white/60">{product.category}</span> / <span className="text-[#2BE08A]">{product.name}</span>
+        <nav className="text-xs font-mono text-[#14201A]/40 mb-8">
+          <a href="../../" className="hover:text-[#15B968]">Inicio</a> / <span className="text-[#14201A]/60">{product.category}</span> / <span className="text-[#15B968]">{product.name}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12">
@@ -42,7 +42,7 @@ export default function ProductView({ product, related }: { product: Product; re
             <div className="flex gap-3 mt-4">
               {product.images.map((im, i) => (
                 <button key={i} onClick={() => setImg(i)}
-                  className={`rounded-xl overflow-hidden border-2 transition-colors ${img === i ? "border-[#2BE08A]" : "border-transparent opacity-60"}`}>
+                  className={`rounded-xl overflow-hidden border-2 transition-colors ${img === i ? "border-[#15B968]" : "border-transparent opacity-60"}`}>
                   <img src={im} alt="" className="w-20 h-20 object-cover" />
                 </button>
               ))}
@@ -52,49 +52,49 @@ export default function ProductView({ product, related }: { product: Product; re
           {/* Info */}
           <div>
             {product.badge && (
-              <span className="bg-[#2BE08A] text-[#06120B] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase">{product.badge}</span>
+              <span className="bg-[#15B968] text-[#06120B] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase">{product.badge}</span>
             )}
             <div className="flex items-start justify-between gap-4 mt-3">
               <h1 className="font-display font-black text-3xl sm:text-4xl">{product.name}</h1>
               <button onClick={() => wish.toggle(product.id)} aria-label="Favorito"
                 className="w-11 h-11 rounded-full glass flex items-center justify-center shrink-0 hover:scale-110 transition-transform">
-                <Heart size={18} className={wish.has(product.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-white/70"} />
+                <Heart size={18} className={wish.has(product.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-[#14201A]/70"} />
               </button>
             </div>
-            <p className="text-white/50 mt-2">{product.tagline}</p>
+            <p className="text-[#14201A]/50 mt-2">{product.tagline}</p>
 
             <div className="flex flex-wrap gap-2 mt-4">
               <span className="flex items-center gap-1.5 text-xs font-mono bg-[#FF4D8D]/10 text-[#FF4D8D] rounded-full px-3 py-1.5">
                 <Flame size={13} /> Solo {stock} en stock
               </span>
-              <span className="flex items-center gap-1.5 text-xs font-mono bg-[#2BE08A]/10 text-[#2BE08A] rounded-full px-3 py-1.5">
+              <span className="flex items-center gap-1.5 text-xs font-mono bg-[#15B968]/10 text-[#15B968] rounded-full px-3 py-1.5">
                 <Eye size={13} /> {viewing} personas viendo ahora
               </span>
             </div>
 
             <div className="flex items-center gap-3 mt-4 glass rounded-2xl px-4 py-3 w-fit">
               <Stars value={product.rating} size={16} />
-              <span className="font-mono font-bold text-[#2BE08A]">{product.rating}</span>
-              <span className="text-white/45 text-xs">· {product.reviewsCount.toLocaleString()} reseñas · {product.sold.toLocaleString()} vendidos</span>
+              <span className="font-mono font-bold text-[#15B968]">{product.rating}</span>
+              <span className="text-[#14201A]/45 text-xs">· {product.reviewsCount.toLocaleString()} reseñas · {product.sold.toLocaleString()} vendidos</span>
             </div>
 
             <div className="flex items-end gap-3 mt-6">
               <p className="font-display font-black text-4xl">{fmt(product.priceUSD, cur)}</p>
-              <p className="text-white/35 line-through font-mono mb-1.5">{fmt(product.compareUSD, cur)}</p>
-              <span className="mb-1.5 text-[#2BE08A] font-mono text-sm">-{Math.round((1 - product.priceUSD / product.compareUSD) * 100)}%</span>
+              <p className="text-[#14201A]/35 line-through font-mono mb-1.5">{fmt(product.compareUSD, cur)}</p>
+              <span className="mb-1.5 text-[#15B968] font-mono text-sm">-{Math.round((1 - product.priceUSD / product.compareUSD) * 100)}%</span>
             </div>
 
-            <p className="text-white/55 mt-5 leading-relaxed">{product.description}</p>
+            <p className="text-[#14201A]/55 mt-5 leading-relaxed">{product.description}</p>
 
             {(product.colors || product.sizes) && (
               <div className="mt-6 space-y-4">
                 {product.colors && (
                   <div>
-                    <p className="font-mono text-xs uppercase tracking-wider text-white/40 mb-2">Color</p>
+                    <p className="font-mono text-xs uppercase tracking-wider text-[#14201A]/40 mb-2">Color</p>
                     <div className="flex gap-2">
                       {product.colors.map((c) => (
                         <button key={c.name} onClick={() => setVariant(c.name)}
-                          className={`px-4 py-2 rounded-full text-sm border transition-colors ${variant === c.name ? "border-[#2BE08A] text-[#2BE08A]" : "border-[var(--line)] text-white/60"}`}>
+                          className={`px-4 py-2 rounded-full text-sm border transition-colors ${variant === c.name ? "border-[#15B968] text-[#15B968]" : "border-[var(--line)] text-[#14201A]/60"}`}>
                           {c.name}
                         </button>
                       ))}
@@ -103,11 +103,11 @@ export default function ProductView({ product, related }: { product: Product; re
                 )}
                 {product.sizes && (
                   <div>
-                    <p className="font-mono text-xs uppercase tracking-wider text-white/40 mb-2">Talla</p>
+                    <p className="font-mono text-xs uppercase tracking-wider text-[#14201A]/40 mb-2">Talla</p>
                     <div className="flex flex-wrap gap-2">
                       {product.sizes.map((s) => (
                         <button key={s} onClick={() => setVariant(s)}
-                          className={`min-w-11 px-3 py-2 rounded-lg text-sm border transition-colors ${variant === s ? "border-[#2BE08A] text-[#2BE08A]" : "border-[var(--line)] text-white/60"}`}>
+                          className={`min-w-11 px-3 py-2 rounded-lg text-sm border transition-colors ${variant === s ? "border-[#15B968] text-[#15B968]" : "border-[var(--line)] text-[#14201A]/60"}`}>
                           {s}
                         </button>
                       ))}
@@ -124,8 +124,8 @@ export default function ProductView({ product, related }: { product: Product; re
             <div className="grid grid-cols-3 gap-3 mt-6">
               {[[Truck, "Envío 48h"], [ShieldCheck, "Garantía 30d"], [RefreshCw, "Contra entrega"]].map(([Ic, t]: any) => (
                 <div key={t} className="glass rounded-2xl p-3 text-center">
-                  <Ic size={18} className="text-[#2BE08A] mx-auto mb-1.5" />
-                  <p className="text-[11px] text-white/55">{t}</p>
+                  <Ic size={18} className="text-[#15B968] mx-auto mb-1.5" />
+                  <p className="text-[11px] text-[#14201A]/55">{t}</p>
                 </div>
               ))}
             </div>
@@ -140,10 +140,10 @@ export default function ProductView({ product, related }: { product: Product; re
               <div key={i} className="glass rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium text-sm">{r.author}</span>
-                  <span className="text-white/35 text-xs font-mono">{r.date}</span>
+                  <span className="text-[#14201A]/35 text-xs font-mono">{r.date}</span>
                 </div>
                 <Stars value={r.rating} size={12} />
-                <p className="text-white/55 text-sm mt-2 leading-relaxed">{r.text}</p>
+                <p className="text-[#14201A]/55 text-sm mt-2 leading-relaxed">{r.text}</p>
                 {r.photo && <img src={r.photo} alt="" className="rounded-xl w-24 h-24 object-cover mt-3" />}
               </div>
             ))}
@@ -164,7 +164,7 @@ export default function ProductView({ product, related }: { product: Product; re
                     <h3 className="font-display font-bold">{p.name}</h3>
                     <div className="flex items-center gap-2 mt-2 mb-3">
                       <Stars value={p.rating} />
-                      <span className="text-xs text-white/40">({p.reviewsCount.toLocaleString()})</span>
+                      <span className="text-xs text-[#14201A]/40">({p.reviewsCount.toLocaleString()})</span>
                     </div>
                     <p className="font-display font-bold text-lg">{fmt(p.priceUSD, cur)}</p>
                   </div>

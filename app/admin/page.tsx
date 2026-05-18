@@ -22,11 +22,11 @@ const monthly = [
   { m: "Abr", v: 67 }, { m: "May", v: 82 },
 ];
 const byCat = [
-  { name: "Tecnología", value: 62, fill: "#2BE08A" },
-  { name: "Moda", value: 38, fill: "#14C8A0" },
+  { name: "Tecnología", value: 62, fill: "#15B968" },
+  { name: "Moda", value: 38, fill: "#0FA88A" },
 ];
 const byCountry = [
-  { name: "Colombia", value: 71, fill: "#2BE08A" },
+  { name: "Colombia", value: 71, fill: "#15B968" },
   { name: "USA", value: 29, fill: "#FF4D8D" },
 ];
 const topProducts = [
@@ -44,17 +44,17 @@ const orders = [
 ];
 
 const estadoColor: Record<string, string> = {
-  Enviado: "text-[#2BE08A] bg-[#2BE08A]/10",
+  Enviado: "text-[#15B968] bg-[#15B968]/10",
   Procesando: "text-[#FFB84D] bg-[#FFB84D]/10",
-  Entregado: "text-[#14C8A0] bg-[#14C8A0]/10",
+  Entregado: "text-[#0FA88A] bg-[#0FA88A]/10",
 };
 
 function Tip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="glass rounded-xl px-3 py-2 text-xs font-mono">
-      <p className="text-white/50">{label}</p>
-      <p className="text-[#2BE08A] font-bold">{payload[0].value.toLocaleString()}</p>
+      <p className="text-[#14201A]/50">{label}</p>
+      <p className="text-[#15B968] font-bold">{payload[0].value.toLocaleString()}</p>
     </div>
   );
 }
@@ -71,11 +71,11 @@ export default function Admin() {
         <div className="aurora" /><div className="grain" />
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
           className="relative z-10 glass rounded-3xl p-8 w-full max-w-sm">
-          <div className="w-14 h-14 rounded-2xl bg-[#2BE08A]/15 flex items-center justify-center mb-5">
-            <Lock size={24} className="text-[#2BE08A]" />
+          <div className="w-14 h-14 rounded-2xl bg-[#15B968]/15 flex items-center justify-center mb-5">
+            <Lock size={24} className="text-[#15B968]" />
           </div>
           <p className="font-display font-black text-2xl">Panel VYRA</p>
-          <p className="text-white/45 text-sm mt-1 mb-6">Acceso solo administrador</p>
+          <p className="text-[#14201A]/45 text-sm mt-1 mb-6">Acceso solo administrador</p>
           <div className="relative">
             <input
               type={show ? "text" : "password"}
@@ -83,16 +83,16 @@ export default function Admin() {
               onChange={(e) => { setPass(e.target.value); setErr(false); }}
               onKeyDown={(e) => e.key === "Enter" && (pass === "vyra2026" ? setAuth(true) : setErr(true))}
               placeholder="Contraseña"
-              className="w-full glass rounded-xl px-4 py-3 pr-11 text-sm outline-none focus:border-[#2BE08A]"
+              className="w-full glass rounded-xl px-4 py-3 pr-11 text-sm outline-none focus:border-[#15B968]"
             />
-            <button onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40">
+            <button onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#14201A]/40">
               {show ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
           {err && <p className="text-[#FF4D8D] text-xs mt-2 font-mono">Contraseña incorrecta</p>}
           <button onClick={() => (pass === "vyra2026" ? setAuth(true) : setErr(true))}
             className="btn-lime w-full py-3 rounded-xl mt-4">Entrar</button>
-          <p className="text-white/30 text-[11px] mt-4 font-mono text-center">Demo · contraseña: vyra2026</p>
+          <p className="text-[#14201A]/30 text-[11px] mt-4 font-mono text-center">Demo · contraseña: vyra2026</p>
         </motion.div>
       </div>
     );
@@ -152,12 +152,12 @@ function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#2BE08A] text-[#06120B] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#15B968] text-[#06120B] flex items-center justify-center">
               <LayoutDashboard size={20} />
             </div>
             <div>
-              <p className="font-display font-black text-xl">VY<span className="text-[#2BE08A]">R</span>A · Admin</p>
-              <p className="text-white/40 text-xs font-mono">Dashboard · datos demo</p>
+              <p className="font-display font-black text-xl">VY<span className="text-[#15B968]">R</span>A · Admin</p>
+              <p className="text-[#14201A]/40 text-xs font-mono">Dashboard · datos demo</p>
             </div>
           </div>
           <a href="./" className="btn-ghost px-5 py-2.5 rounded-full text-sm">← Ver tienda</a>
@@ -169,15 +169,15 @@ function Dashboard() {
             <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }} className="glass rounded-3xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-[#2BE08A]/15 flex items-center justify-center">
-                  <Icon size={20} className="text-[#2BE08A]" />
+                <div className="w-11 h-11 rounded-2xl bg-[#15B968]/15 flex items-center justify-center">
+                  <Icon size={20} className="text-[#15B968]" />
                 </div>
-                <span className={`flex items-center gap-1 text-xs font-mono font-bold ${up ? "text-[#2BE08A]" : "text-[#FF4D8D]"}`}>
+                <span className={`flex items-center gap-1 text-xs font-mono font-bold ${up ? "text-[#15B968]" : "text-[#FF4D8D]"}`}>
                   {up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}{delta}
                 </span>
               </div>
               <p className="font-display font-black text-2xl">{value}</p>
-              <p className="text-white/45 text-sm mt-1">{label}</p>
+              <p className="text-[#14201A]/45 text-sm mt-1">{label}</p>
             </motion.div>
           ))}
         </div>
@@ -186,27 +186,27 @@ function Dashboard() {
         <div className="grid lg:grid-cols-3 gap-5 mb-6">
           <div className="lg:col-span-2 glass rounded-3xl p-6">
             <p className="font-display font-bold mb-1">Ingresos esta semana</p>
-            <p className="text-white/40 text-xs font-mono mb-5">COP · últimos 7 días</p>
+            <p className="text-[#14201A]/40 text-xs font-mono mb-5">COP · últimos 7 días</p>
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={revenue}>
                 <defs>
                   <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2BE08A" stopOpacity={0.5} />
-                    <stop offset="100%" stopColor="#2BE08A" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#15B968" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#15B968" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
                 <XAxis dataKey="d" stroke="#8B8B97" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#8B8B97" fontSize={11} tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip content={<Tip />} />
-                <Area type="monotone" dataKey="v" stroke="#2BE08A" strokeWidth={2.5} fill="url(#g)" />
+                <Area type="monotone" dataKey="v" stroke="#15B968" strokeWidth={2.5} fill="url(#g)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
           <div className="glass rounded-3xl p-6">
             <p className="font-display font-bold mb-1">Ventas por categoría</p>
-            <p className="text-white/40 text-xs font-mono mb-3">% del total</p>
+            <p className="text-[#14201A]/40 text-xs font-mono mb-3">% del total</p>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={byCat} dataKey="value" innerRadius={55} outerRadius={85} paddingAngle={4} stroke="none">
@@ -219,7 +219,7 @@ function Dashboard() {
               {byCat.map((c) => (
                 <div key={c.name} className="flex items-center gap-2 text-xs">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: c.fill }} />
-                  <span className="text-white/60">{c.name} {c.value}%</span>
+                  <span className="text-[#14201A]/60">{c.name} {c.value}%</span>
                 </div>
               ))}
             </div>
@@ -230,19 +230,19 @@ function Dashboard() {
         <div className="grid lg:grid-cols-3 gap-5 mb-6">
           <div className="glass rounded-3xl p-6">
             <p className="font-display font-bold mb-1">Crecimiento mensual</p>
-            <p className="text-white/40 text-xs font-mono mb-5">Ingresos M COP</p>
+            <p className="text-[#14201A]/40 text-xs font-mono mb-5">Ingresos M COP</p>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={monthly}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
                 <XAxis dataKey="m" stroke="#8B8B97" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip content={<Tip />} cursor={{ fill: "rgba(198,255,61,0.05)" }} />
-                <Bar dataKey="v" fill="#14C8A0" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="v" fill="#0FA88A" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <div className="glass rounded-3xl p-6">
-            <p className="font-display font-bold mb-1 flex items-center gap-2"><Globe size={16} className="text-[#2BE08A]" /> Ventas por país</p>
-            <p className="text-white/40 text-xs font-mono mb-3">Colombia vs USA</p>
+            <p className="font-display font-bold mb-1 flex items-center gap-2"><Globe size={16} className="text-[#15B968]" /> Ventas por país</p>
+            <p className="text-[#14201A]/40 text-xs font-mono mb-3">Colombia vs USA</p>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie data={byCountry} dataKey="value" innerRadius={50} outerRadius={82} paddingAngle={4} stroke="none">
@@ -255,22 +255,22 @@ function Dashboard() {
               {byCountry.map((c) => (
                 <div key={c.name} className="flex items-center gap-2 text-xs">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: c.fill }} />
-                  <span className="text-white/60">{c.name} {c.value}%</span>
+                  <span className="text-[#14201A]/60">{c.name} {c.value}%</span>
                 </div>
               ))}
             </div>
           </div>
           <div className="glass rounded-3xl p-6">
-            <p className="font-display font-bold mb-4 flex items-center gap-2"><Package size={16} className="text-[#2BE08A]" /> Top productos</p>
+            <p className="font-display font-bold mb-4 flex items-center gap-2"><Package size={16} className="text-[#15B968]" /> Top productos</p>
             <div className="space-y-3">
               {topProducts.map((p, i) => (
                 <div key={p.name} className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-white/30 w-4">{i + 1}</span>
+                  <span className="font-mono text-xs text-[#14201A]/30 w-4">{i + 1}</span>
                   <div className="flex-1">
                     <p className="text-sm font-medium leading-tight">{p.name}</p>
-                    <p className="text-white/40 text-xs">{p.sold.toLocaleString()} vendidos</p>
+                    <p className="text-[#14201A]/40 text-xs">{p.sold.toLocaleString()} vendidos</p>
                   </div>
-                  <span className="font-mono text-sm text-[#2BE08A]">{p.rev}</span>
+                  <span className="font-mono text-sm text-[#15B968]">{p.rev}</span>
                 </div>
               ))}
             </div>
@@ -282,13 +282,13 @@ function Dashboard() {
           <p className="font-display font-bold mb-5 flex items-center gap-2">
             Pedidos recientes
             {liveRows.length > 0
-              ? <span className="text-[10px] font-mono bg-[#2BE08A]/15 text-[#2BE08A] px-2 py-0.5 rounded-full">● EN VIVO · Supabase</span>
-              : <span className="text-[10px] font-mono text-white/40">(demo · sin pedidos reales aún)</span>}
+              ? <span className="text-[10px] font-mono bg-[#15B968]/15 text-[#15B968] px-2 py-0.5 rounded-full">● EN VIVO · Supabase</span>
+              : <span className="text-[10px] font-mono text-[#14201A]/40">(demo · sin pedidos reales aún)</span>}
           </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-white/40 font-mono text-xs uppercase tracking-wider border-b border-[var(--line)]">
+                <tr className="text-[#14201A]/40 font-mono text-xs uppercase tracking-wider border-b border-[var(--line)]">
                   <th className="text-left pb-3 font-normal">Pedido</th>
                   <th className="text-left pb-3 font-normal">Cliente</th>
                   <th className="text-left pb-3 font-normal">País</th>
@@ -299,20 +299,20 @@ function Dashboard() {
               <tbody>
                 {rows.map((o, i) => (
                   <tr key={i} className="border-b border-[var(--line)] last:border-0">
-                    <td className="py-3.5 font-mono text-[#2BE08A]">{o.id}</td>
+                    <td className="py-3.5 font-mono text-[#15B968]">{o.id}</td>
                     <td className="py-3.5">{o.cliente}</td>
-                    <td className="py-3.5 text-white/60">{o.pais}</td>
+                    <td className="py-3.5 text-[#14201A]/60">{o.pais}</td>
                     <td className="py-3.5 font-mono">{o.total}</td>
                     <td className="py-3.5">
                       {o.rawId ? (
                         <select value={o.estado} onChange={(e) => setStatus(o.rawId, e.target.value)}
-                          className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#2BE08A] bg-[#2BE08A]/10"}`}>
+                          className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#15B968] bg-[#15B968]/10"}`}>
                           {["Procesando", "Enviado", "Entregado", "Cancelado"].map((s) => (
-                            <option key={s} value={s} className="bg-[#14141E] text-white">{s}</option>
+                            <option key={s} value={s} className="bg-white text-[#14201A]">{s}</option>
                           ))}
                         </select>
                       ) : (
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#2BE08A] bg-[#2BE08A]/10"}`}>{o.estado}</span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#15B968] bg-[#15B968]/10"}`}>{o.estado}</span>
                       )}
                     </td>
                   </tr>

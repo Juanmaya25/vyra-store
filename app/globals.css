@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0A0F0C;
-  --bg-2: #0E1410;
-  --surface: #121A15;
-  --surface-2: #18221C;
-  --line: rgba(255,255,255,0.08);
-  --text: #ECF5EE;
-  --muted: #7E948A;
-  --lime: #2BE08A;
-  --lime-dim: #1FB873;
-  --violet: #14C8A0;
-  --pink: #E6F5EC;
+  --bg: #F7F9F6;
+  --bg-2: #EEF2EC;
+  --surface: #FFFFFF;
+  --surface-2: #F2F5F1;
+  --line: rgba(0,0,0,0.10);
+  --text: #14201A;
+  --muted: #5C6B63;
+  --lime: #15B968;
+  --lime-dim: #0E9E55;
+  --violet: #0FA88A;
+  --pink: #E0457E;
 }
 
 @theme inline {
@@ -38,7 +38,7 @@ body {
 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #2a2a38; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #cfd8d2; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--lime-dim); }
 
 .font-display { font-family: var(--font-display), sans-serif; }
@@ -51,26 +51,27 @@ body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 50% at 12% 8%, rgba(43,224,138,0.12), transparent 60%),
-    radial-gradient(ellipse 50% 50% at 88% 18%, rgba(20,200,160,0.12), transparent 55%),
-    radial-gradient(ellipse 60% 60% at 70% 92%, rgba(31,184,115,0.10), transparent 55%);
+    radial-gradient(ellipse 60% 50% at 12% 8%, rgba(21,185,104,0.10), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 88% 18%, rgba(15,168,138,0.10), transparent 55%),
+    radial-gradient(ellipse 60% 60% at 70% 92%, rgba(21,185,104,0.08), transparent 55%);
 }
 .grain {
   position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.18;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
 }
 
 /* ── Glow / glass ── */
 .glass {
-  background: rgba(20,20,30,0.6);
+  background: rgba(255,255,255,0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--line);
+  box-shadow: 0 4px 24px -8px rgba(0,0,0,0.06);
 }
 .glow-lime { box-shadow: 0 0 0 1px rgba(43,224,138,0.3), 0 10px 40px -10px rgba(43,224,138,0.35); }
 .text-glow { text-shadow: 0 0 30px rgba(43,224,138,0.5); }
@@ -139,7 +140,7 @@ body {
 
 /* ── Gradient text ── */
 .grad {
-  background: linear-gradient(110deg, #2BE08A 0%, #14C8A0 55%, #8FE8C4 100%);
+  background: linear-gradient(110deg, #0E9E55 0%, #0FA88A 55%, #15B968 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

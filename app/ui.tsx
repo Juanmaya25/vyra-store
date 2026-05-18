@@ -30,8 +30,8 @@ function CurrencyPicker() {
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-mono hover:border-[#2BE08A] transition-colors">
-        <Globe size={13} className="text-[#2BE08A]" />
+        className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-mono hover:border-[#15B968] transition-colors">
+        <Globe size={13} className="text-[#15B968]" />
         {CURRENCIES[cur].flag} {cur}
       </button>
       {open && (
@@ -40,9 +40,9 @@ function CurrencyPicker() {
           <div className="absolute right-0 mt-2 z-50 glass rounded-2xl p-2 w-44 max-h-72 overflow-y-auto">
             {(Object.keys(CURRENCIES) as CurrencyCode[]).map((c) => (
               <button key={c} onClick={() => { setCur(c); setOpen(false); }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${cur === c ? "bg-[#2BE08A]/15 text-[#2BE08A]" : "hover:bg-white/5 text-white/70"}`}>
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${cur === c ? "bg-[#15B968]/15 text-[#15B968]" : "hover:bg-black/5 text-[#14201A]/70"}`}>
                 <span>{CURRENCIES[c].flag} {CURRENCIES[c].label}</span>
-                {cur === c ? <Check size={14} /> : <span className="font-mono text-xs text-white/40">{c}</span>}
+                {cur === c ? <Check size={14} /> : <span className="font-mono text-xs text-[#14201A]/40">{c}</span>}
               </button>
             ))}
           </div>
@@ -57,7 +57,7 @@ export function Stars({ value, size = 14 }: { value: number; size?: number }) {
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
         <Star key={i} size={size}
-          className={i <= Math.round(value) ? "fill-[#2BE08A] text-[#2BE08A]" : "text-white/15"} />
+          className={i <= Math.round(value) ? "fill-[#15B968] text-[#15B968]" : "text-[#14201A]/15"} />
       ))}
     </div>
   );
@@ -70,7 +70,7 @@ export function WhatsAppFloat() {
       className="fixed bottom-6 right-6 z-40 group" aria-label="WhatsApp">
       <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-30" />
       <span className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] shadow-2xl group-hover:scale-110 transition-transform">
-        <MessageCircle size={26} className="text-white" />
+        <MessageCircle size={26} className="text-[#14201A]" />
       </span>
     </a>
   );
@@ -82,8 +82,8 @@ function Account() {
   if (!user) {
     return (
       <button onClick={loginGoogle}
-        className="hidden sm:flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-medium hover:border-[#2BE08A] transition-colors">
-        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#2BE08A" d="M21.35 11.1h-9.17v2.99h5.27c-.23 1.49-1.64 4.37-5.27 4.37-3.17 0-5.76-2.62-5.76-5.86s2.59-5.86 5.76-5.86c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.46 3.94 14.43 3 12.18 3 7.03 3 2.86 7.17 2.86 12.6S7.03 22.2 12.18 22.2c5.95 0 9.88-4.18 9.88-10.06 0-.68-.07-1.2-.71-1.04Z"/></svg>
+        className="hidden sm:flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-medium hover:border-[#15B968] transition-colors">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#15B968" d="M21.35 11.1h-9.17v2.99h5.27c-.23 1.49-1.64 4.37-5.27 4.37-3.17 0-5.76-2.62-5.76-5.86s2.59-5.86 5.76-5.86c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.46 3.94 14.43 3 12.18 3 7.03 3 2.86 7.17 2.86 12.6S7.03 22.2 12.18 22.2c5.95 0 9.88-4.18 9.88-10.06 0-.68-.07-1.2-.71-1.04Z"/></svg>
         Entrar
       </button>
     );
@@ -93,7 +93,7 @@ function Account() {
       <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 rounded-full glass px-2 py-1.5">
         {user.avatar
           ? <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />
-          : <span className="w-6 h-6 rounded-full bg-[#2BE08A] text-[#06120B] flex items-center justify-center text-xs font-bold">{user.name[0]?.toUpperCase()}</span>}
+          : <span className="w-6 h-6 rounded-full bg-[#15B968] text-[#06120B] flex items-center justify-center text-xs font-bold">{user.name[0]?.toUpperCase()}</span>}
         <span className="hidden sm:block text-xs font-medium max-w-[90px] truncate">{user.name}</span>
       </button>
       {menu && (
@@ -101,13 +101,13 @@ function Account() {
           <div className="fixed inset-0 z-40" onClick={() => setMenu(false)} />
           <div className="absolute right-0 mt-2 z-50 glass rounded-2xl p-2 w-52">
             <div className="px-3 py-2 border-b border-[var(--line)] mb-1">
-              <p className="text-xs text-white/40">Sesión iniciada</p>
+              <p className="text-xs text-[#14201A]/40">Sesión iniciada</p>
               <p className="text-sm truncate">{user.email}</p>
             </div>
-            <a href="/vyra-store/cuenta/" className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-white/70 hover:bg-white/5">
+            <a href="/vyra-store/cuenta/" className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#14201A]/70 hover:bg-black/5">
               <Package size={14} /> Mis pedidos
             </a>
-            <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-white/70 hover:bg-white/5">
+            <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#14201A]/70 hover:bg-black/5">
               <LogOut size={14} /> Cerrar sesión
             </button>
           </div>
@@ -122,7 +122,7 @@ export function Nav({ base = "" }: { base?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className="relative z-30 bg-[#2BE08A] text-[#06120B] py-2 overflow-hidden text-xs font-mono font-bold uppercase tracking-wider">
+      <div className="relative z-30 bg-[#15B968] text-[#06120B] py-2 overflow-hidden text-xs font-mono font-bold uppercase tracking-wider">
         <div className="flex whitespace-nowrap marquee">
           {Array(2).fill(0).map((_, k) => (
             <div key={k} className="flex shrink-0">
@@ -137,20 +137,20 @@ export function Nav({ base = "" }: { base?: string }) {
         <div className="glass border-b border-[var(--line)]">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href={base + "./"} className="font-display font-black text-2xl tracking-tight">
-              VY<span className="text-[#2BE08A]">R</span>A
+              VY<span className="text-[#15B968]">R</span>A
             </a>
             <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-              <a href={base + "./#catalogo"} className="navx text-white/80 hover:text-white">Catálogo</a>
-              <a href={base + "./#confianza"} className="navx text-white/80 hover:text-white">Garantía</a>
-              <a href={base + "./envios/"} className="navx text-white/80 hover:text-white">Envíos</a>
+              <a href={base + "./#catalogo"} className="navx text-[#14201A]/80 hover:text-[#14201A]">Catálogo</a>
+              <a href={base + "./#confianza"} className="navx text-[#14201A]/80 hover:text-[#14201A]">Garantía</a>
+              <a href={base + "./envios/"} className="navx text-[#14201A]/80 hover:text-[#14201A]">Envíos</a>
             </div>
             <div className="flex items-center gap-3">
               <Account />
               <CurrencyPicker />
-              <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
+              <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-black/5 transition-colors">
                 <ShoppingBag size={20} />
                 {count > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#2BE08A] text-[#06120B] text-[10px] font-bold flex items-center justify-center">{count}</span>
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#15B968] text-[#06120B] text-[10px] font-bold flex items-center justify-center">{count}</span>
                 )}
               </button>
             </div>
@@ -215,57 +215,57 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 {step === "checkout" && "Tus datos"}
                 {step === "done" && "¡Pedido confirmado!"}
               </p>
-              <button onClick={() => { onClose(); setStep("cart"); }} className="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10"><X size={18} /></button>
+              <button onClick={() => { onClose(); setStep("cart"); }} className="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-black/10"><X size={18} /></button>
             </div>
 
             {step === "done" && (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#2BE08A]/15 flex items-center justify-center mb-5">
-                  <Check size={30} className="text-[#2BE08A]" />
+                <div className="w-16 h-16 rounded-full bg-[#15B968]/15 flex items-center justify-center mb-5">
+                  <Check size={30} className="text-[#15B968]" />
                 </div>
                 <p className="font-display font-black text-xl">¡Gracias por tu compra!</p>
-                <p className="text-white/50 text-sm mt-2">Tu pedido <span className="text-[#2BE08A] font-mono">#VY-{orderId}</span> fue registrado. Te contactaremos por correo para coordinar el pago y envío.</p>
+                <p className="text-[#14201A]/50 text-sm mt-2">Tu pedido <span className="text-[#15B968] font-mono">#VY-{orderId}</span> fue registrado. Te contactaremos por correo para coordinar el pago y envío.</p>
                 <button onClick={() => { onClose(); setStep("cart"); }} className="btn-ghost px-6 py-3 rounded-full mt-7">Seguir comprando</button>
               </div>
             )}
 
             {step === "checkout" && (
               <form onSubmit={placeOrder} className="flex-1 overflow-y-auto p-6 space-y-4">
-                <button type="button" onClick={() => setStep("cart")} className="text-white/45 text-sm font-mono hover:text-[#2BE08A]">← Volver al carrito</button>
+                <button type="button" onClick={() => setStep("cart")} className="text-[#14201A]/45 text-sm font-mono hover:text-[#15B968]">← Volver al carrito</button>
                 {[
                   { k: "cliente", label: "Nombre completo", type: "text", ph: "Juan García" },
                   { k: "email", label: "Correo electrónico", type: "email", ph: "juan@correo.com" },
                 ].map((f) => (
                   <div key={f.k}>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-white/40 mb-1.5">{f.label}</label>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-[#14201A]/40 mb-1.5">{f.label}</label>
                     <input type={f.type} required value={form[f.k as keyof typeof form]}
                       onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
                       placeholder={f.ph}
-                      className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#2BE08A]" />
+                      className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#15B968]" />
                   </div>
                 ))}
                 <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-white/40 mb-1.5">País</label>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-[#14201A]/40 mb-1.5">País</label>
                   <select value={form.pais} onChange={(e) => setForm({ ...form, pais: e.target.value })}
-                    className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#2BE08A]">
+                    className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#15B968]">
                     {["Colombia", "USA", "México", "España", "Chile", "Perú", "Argentina", "Brasil"].map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </div>
                 <label className="flex items-start gap-3 glass rounded-xl p-4 cursor-pointer">
                   <input type="checkbox" checked={promo} onChange={(e) => setPromo(e.target.checked)}
-                    className="mt-0.5 accent-[#2BE08A] w-4 h-4" />
-                  <span className="text-xs text-white/55 leading-relaxed">
-                    Quiero recibir <span className="text-[#2BE08A]">ofertas exclusivas y novedades</span> de VYRA por correo. Puedo cancelar cuando quiera.
+                    className="mt-0.5 accent-[#15B968] w-4 h-4" />
+                  <span className="text-xs text-[#14201A]/55 leading-relaxed">
+                    Quiero recibir <span className="text-[#15B968]">ofertas exclusivas y novedades</span> de VYRA por correo. Puedo cancelar cuando quiera.
                   </span>
                 </label>
                 <div className="glass rounded-xl p-4 flex justify-between text-sm">
-                  <span className="text-white/55">Total a pagar</span>
+                  <span className="text-[#14201A]/55">Total a pagar</span>
                   <span className="font-display font-bold">{fmt(total, cur)}</span>
                 </div>
                 <button type="submit" disabled={sending} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-60">
                   {sending ? "Registrando..." : <>Confirmar pedido <ChevronRight size={18} /></>}
                 </button>
-                <p className="text-center text-white/35 text-xs font-mono">Te contactaremos para coordinar el pago (Wompi · Stripe · contra entrega)</p>
+                <p className="text-center text-[#14201A]/35 text-xs font-mono">Te contactaremos para coordinar el pago (Wompi · Stripe · contra entrega)</p>
               </form>
             )}
 
@@ -273,8 +273,8 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {lines.length === 0 && (
                 <div className="text-center py-20">
-                  <ShoppingBag size={40} className="mx-auto text-white/20 mb-4" />
-                  <p className="text-white/45">Tu carrito está vacío</p>
+                  <ShoppingBag size={40} className="mx-auto text-[#14201A]/20 mb-4" />
+                  <p className="text-[#14201A]/45">Tu carrito está vacío</p>
                 </div>
               )}
               {lines.map((l, i) => (
@@ -282,14 +282,14 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                   <img src={l.image} alt="" className="w-20 h-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <p className="font-medium text-sm leading-tight">{l.name}</p>
-                    <p className="text-white/40 text-xs mt-0.5">{l.variant}</p>
+                    <p className="text-[#14201A]/40 text-xs mt-0.5">{l.variant}</p>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-2">
                         <button onClick={() => changeQty(i, -1)} className="w-6 h-6 rounded-full glass flex items-center justify-center"><Minus size={12} /></button>
                         <span className="font-mono text-sm w-5 text-center">{l.qty}</span>
                         <button onClick={() => changeQty(i, 1)} className="w-6 h-6 rounded-full glass flex items-center justify-center"><Plus size={12} /></button>
                       </div>
-                      <span className="font-mono text-sm text-[#2BE08A]">{fmt(l.priceUSD * l.qty, cur)}</span>
+                      <span className="font-mono text-sm text-[#15B968]">{fmt(l.priceUSD * l.qty, cur)}</span>
                     </div>
                   </div>
                 </div>
@@ -299,13 +299,13 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             {step === "cart" && lines.length > 0 && (
               <div className="p-6 border-t border-[var(--line)]">
                 <div className="flex justify-between mb-4">
-                  <span className="text-white/55">Total</span>
+                  <span className="text-[#14201A]/55">Total</span>
                   <span className="font-display font-black text-2xl">{fmt(total, cur)}</span>
                 </div>
                 <button onClick={() => setStep("checkout")} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2">
                   Finalizar compra <ChevronRight size={18} />
                 </button>
-                <p className="text-center text-white/35 text-xs mt-3 font-mono">Pago seguro · Wompi · Stripe · Contra entrega</p>
+                <p className="text-center text-[#14201A]/35 text-xs mt-3 font-mono">Pago seguro · Wompi · Stripe · Contra entrega</p>
               </div>
             )}
           </motion.div>
@@ -321,35 +321,35 @@ export function Footer({ base = "" }: { base?: string }) {
       <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <p className="font-display font-black text-3xl mb-3">VY<span className="text-[#2BE08A]">R</span>A</p>
-            <p className="text-white/45 text-sm max-w-xs leading-relaxed">El futuro, a tu puerta. Tecnología y moda curada para Colombia y Estados Unidos.</p>
+            <p className="font-display font-black text-3xl mb-3">VY<span className="text-[#15B968]">R</span>A</p>
+            <p className="text-[#14201A]/45 text-sm max-w-xs leading-relaxed">El futuro, a tu puerta. Tecnología y moda curada para Colombia y Estados Unidos.</p>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-4">Tienda</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-4">Tienda</p>
             <ul className="space-y-2.5">
-              <li><a href={base + "./#catalogo"} className="text-white/55 text-sm hover:text-white">Catálogo</a></li>
-              <li><a href={base + "./envios/"} className="text-white/55 text-sm hover:text-white">Envíos</a></li>
-              <li><a href={base + "./devoluciones/"} className="text-white/55 text-sm hover:text-white">Devoluciones</a></li>
+              <li><a href={base + "./#catalogo"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Catálogo</a></li>
+              <li><a href={base + "./envios/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Envíos</a></li>
+              <li><a href={base + "./devoluciones/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Devoluciones</a></li>
             </ul>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-4">Legal</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-4">Legal</p>
             <ul className="space-y-2.5">
-              <li><a href={base + "./terminos/"} className="text-white/55 text-sm hover:text-white">Términos</a></li>
-              <li><a href={base + "./privacidad/"} className="text-white/55 text-sm hover:text-white">Privacidad</a></li>
-              <li><a href={base + "./admin/"} className="text-white/55 text-sm hover:text-white">Panel admin</a></li>
+              <li><a href={base + "./terminos/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Términos</a></li>
+              <li><a href={base + "./privacidad/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Privacidad</a></li>
+              <li><a href={base + "./admin/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Panel admin</a></li>
             </ul>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-12 pt-8 border-t border-[var(--line)]">
-          <span className="text-white/35 text-xs font-mono mr-2">Pago 100% seguro:</span>
+          <span className="text-[#14201A]/35 text-xs font-mono mr-2">Pago 100% seguro:</span>
           {["VISA", "MASTERCARD", "PSE", "NEQUI", "PAYPAL", "STRIPE"].map((m) => (
-            <span key={m} className="glass rounded-lg px-3 py-1.5 text-[10px] font-mono font-bold text-white/60">{m}</span>
+            <span key={m} className="glass rounded-lg px-3 py-1.5 text-[10px] font-mono font-bold text-[#14201A]/60">{m}</span>
           ))}
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-          <p className="text-white/35 text-xs font-mono">© 2026 VYRA · Todos los derechos reservados</p>
-          <p className="text-white/35 text-xs font-mono">Envíos a 8 países · Hecho con visión de futuro</p>
+          <p className="text-[#14201A]/35 text-xs font-mono">© 2026 VYRA · Todos los derechos reservados</p>
+          <p className="text-[#14201A]/35 text-xs font-mono">Envíos a 8 países · Hecho con visión de futuro</p>
         </div>
       </div>
     </footer>
@@ -386,10 +386,10 @@ export function SocialProof() {
         <motion.div
           initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
           className="fixed bottom-6 left-6 z-40 glass rounded-2xl p-4 pr-6 flex items-center gap-3 max-w-xs">
-          <span className="w-9 h-9 rounded-full bg-[#2BE08A]/15 flex items-center justify-center text-lg">🛍️</span>
+          <span className="w-9 h-9 rounded-full bg-[#15B968]/15 flex items-center justify-center text-lg">🛍️</span>
           <div>
             <p className="text-sm font-medium leading-tight"><strong>{n}</strong> de {c}</p>
-            <p className="text-white/50 text-xs mt-0.5">acaba de comprar {p}</p>
+            <p className="text-[#14201A]/50 text-xs mt-0.5">acaba de comprar {p}</p>
           </div>
         </motion.div>
       )}
@@ -410,7 +410,7 @@ export function Faq() {
   return (
     <section className="relative z-10 max-w-3xl mx-auto px-6 pb-24">
       <div className="text-center mb-10">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-2">// Dudas</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-2">// Dudas</p>
         <h2 className="font-display font-black text-4xl">Preguntas frecuentes</h2>
       </div>
       <div className="space-y-3">
@@ -418,9 +418,9 @@ export function Faq() {
           <div key={i} className="glass rounded-2xl overflow-hidden">
             <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-4 p-5 text-left">
               <span className="font-medium">{q}</span>
-              {open === i ? <Minus size={18} className="text-[#2BE08A] shrink-0" /> : <Plus size={18} className="text-[#2BE08A] shrink-0" />}
+              {open === i ? <Minus size={18} className="text-[#15B968] shrink-0" /> : <Plus size={18} className="text-[#15B968] shrink-0" />}
             </button>
-            {open === i && <div className="px-5 pb-5 text-white/55 text-sm leading-relaxed">{a}</div>}
+            {open === i && <div className="px-5 pb-5 text-[#14201A]/55 text-sm leading-relaxed">{a}</div>}
           </div>
         ))}
       </div>
@@ -436,14 +436,14 @@ export function Newsletter() {
     <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
       <div className="glass rounded-3xl p-10 sm:p-14 text-center glow-lime">
         <h2 className="font-display font-black text-3xl sm:text-4xl mb-3">Sé el primero en el próximo drop</h2>
-        <p className="text-white/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#2BE08A] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
+        <p className="text-[#14201A]/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#15B968] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
         {done ? (
-          <p className="text-[#2BE08A] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
+          <p className="text-[#15B968] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
         ) : (
           <form onSubmit={async (e) => { e.preventDefault(); if (email) { const { addSubscriber } = await import("./supabase"); await addSubscriber(email, "newsletter"); setDone(true); } }}
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com"
-              className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#2BE08A]" />
+              className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#15B968]" />
             <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 10%</button>
           </form>
         )}
@@ -458,9 +458,9 @@ export function LegalLayout({ title, children }: { title: string; children: Reac
       <div className="aurora" /><div className="grain" />
       <Nav base="../" />
       <main className="relative z-10 max-w-3xl mx-auto px-6 py-16">
-        <a href="../" className="text-white/45 text-sm font-mono hover:text-[#2BE08A]">← Volver a la tienda</a>
+        <a href="../" className="text-[#14201A]/45 text-sm font-mono hover:text-[#15B968]">← Volver a la tienda</a>
         <h1 className="font-display font-black text-4xl mt-6 mb-8">{title}</h1>
-        <div className="space-y-5 text-white/60 leading-relaxed text-sm">{children}</div>
+        <div className="space-y-5 text-[#14201A]/60 leading-relaxed text-sm">{children}</div>
       </main>
       <Footer base="../" />
       <WhatsAppFloat />

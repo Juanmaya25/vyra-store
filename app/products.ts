@@ -39,7 +39,7 @@ export const PRODUCTS: Product[] = [
     reviewsCount: 3127,
     sold: 18420,
     badge: "MÁS VENDIDO",
-    colors: [{ name: "Negro", hex: "#15151c" }, { name: "Lima", hex: "#2BE08A" }, { name: "Blanco", hex: "#ECECEC" }],
+    colors: [{ name: "Negro", hex: "#15151c" }, { name: "Lima", hex: "#15B968" }, { name: "Blanco", hex: "#ECECEC" }],
     description:
       "Sonido envolvente con ANC inteligente que se adapta a tu entorno. 36h de batería, latencia ultrabaja y resistencia al agua IPX5. El compañero perfecto para todo.",
     reviews: [
@@ -206,7 +206,7 @@ export const PRODUCTS: Product[] = [
     reviewsCount: 2890,
     sold: 15670,
     badge: "MÁS VENDIDO",
-    colors: [{ name: "Negro mate", hex: "#15151c" }, { name: "Lima", hex: "#2BE08A" }, { name: "Arena", hex: "#C9B79C" }],
+    colors: [{ name: "Negro mate", hex: "#15151c" }, { name: "Lima", hex: "#15B968" }, { name: "Arena", hex: "#C9B79C" }],
     description:
       "Botella térmica de acero inoxidable que mantiene tus bebidas frías 24h o calientes 12h. Diseño antigoteo, libre de BPA y acabado premium antideslizante.",
     reviews: [
