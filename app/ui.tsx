@@ -30,8 +30,8 @@ function CurrencyPicker() {
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-mono hover:border-[#C6FF3D] transition-colors">
-        <Globe size={13} className="text-[#C6FF3D]" />
+        className="flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-mono hover:border-[#2BE08A] transition-colors">
+        <Globe size={13} className="text-[#2BE08A]" />
         {CURRENCIES[cur].flag} {cur}
       </button>
       {open && (
@@ -40,7 +40,7 @@ function CurrencyPicker() {
           <div className="absolute right-0 mt-2 z-50 glass rounded-2xl p-2 w-44 max-h-72 overflow-y-auto">
             {(Object.keys(CURRENCIES) as CurrencyCode[]).map((c) => (
               <button key={c} onClick={() => { setCur(c); setOpen(false); }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${cur === c ? "bg-[#C6FF3D]/15 text-[#C6FF3D]" : "hover:bg-white/5 text-white/70"}`}>
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${cur === c ? "bg-[#2BE08A]/15 text-[#2BE08A]" : "hover:bg-white/5 text-white/70"}`}>
                 <span>{CURRENCIES[c].flag} {CURRENCIES[c].label}</span>
                 {cur === c ? <Check size={14} /> : <span className="font-mono text-xs text-white/40">{c}</span>}
               </button>
@@ -57,7 +57,7 @@ export function Stars({ value, size = 14 }: { value: number; size?: number }) {
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
         <Star key={i} size={size}
-          className={i <= Math.round(value) ? "fill-[#C6FF3D] text-[#C6FF3D]" : "text-white/15"} />
+          className={i <= Math.round(value) ? "fill-[#2BE08A] text-[#2BE08A]" : "text-white/15"} />
       ))}
     </div>
   );
@@ -82,8 +82,8 @@ function Account() {
   if (!user) {
     return (
       <button onClick={loginGoogle}
-        className="hidden sm:flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-medium hover:border-[#C6FF3D] transition-colors">
-        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#C6FF3D" d="M21.35 11.1h-9.17v2.99h5.27c-.23 1.49-1.64 4.37-5.27 4.37-3.17 0-5.76-2.62-5.76-5.86s2.59-5.86 5.76-5.86c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.46 3.94 14.43 3 12.18 3 7.03 3 2.86 7.17 2.86 12.6S7.03 22.2 12.18 22.2c5.95 0 9.88-4.18 9.88-10.06 0-.68-.07-1.2-.71-1.04Z"/></svg>
+        className="hidden sm:flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-medium hover:border-[#2BE08A] transition-colors">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#2BE08A" d="M21.35 11.1h-9.17v2.99h5.27c-.23 1.49-1.64 4.37-5.27 4.37-3.17 0-5.76-2.62-5.76-5.86s2.59-5.86 5.76-5.86c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.46 3.94 14.43 3 12.18 3 7.03 3 2.86 7.17 2.86 12.6S7.03 22.2 12.18 22.2c5.95 0 9.88-4.18 9.88-10.06 0-.68-.07-1.2-.71-1.04Z"/></svg>
         Entrar
       </button>
     );
@@ -93,7 +93,7 @@ function Account() {
       <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 rounded-full glass px-2 py-1.5">
         {user.avatar
           ? <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />
-          : <span className="w-6 h-6 rounded-full bg-[#C6FF3D] text-[#0A0A0F] flex items-center justify-center text-xs font-bold">{user.name[0]?.toUpperCase()}</span>}
+          : <span className="w-6 h-6 rounded-full bg-[#2BE08A] text-[#06120B] flex items-center justify-center text-xs font-bold">{user.name[0]?.toUpperCase()}</span>}
         <span className="hidden sm:block text-xs font-medium max-w-[90px] truncate">{user.name}</span>
       </button>
       {menu && (
@@ -122,12 +122,12 @@ export function Nav({ base = "" }: { base?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className="relative z-30 bg-[#C6FF3D] text-[#0A0A0F] py-2 overflow-hidden text-xs font-mono font-bold uppercase tracking-wider">
+      <div className="relative z-30 bg-[#2BE08A] text-[#06120B] py-2 overflow-hidden text-xs font-mono font-bold uppercase tracking-wider">
         <div className="flex whitespace-nowrap marquee">
           {Array(2).fill(0).map((_, k) => (
             <div key={k} className="flex shrink-0">
               {["Envío gratis desde $50", "Garantía VYRA 30 días", "Colombia + USA", "Pago contra entrega", "Productos curados 2026"].map((t) => (
-                <span key={t} className="flex items-center px-6">{t}<span className="ml-6 w-1.5 h-1.5 rounded-full bg-[#0A0A0F]" /></span>
+                <span key={t} className="flex items-center px-6">{t}<span className="ml-6 w-1.5 h-1.5 rounded-full bg-[#06120B]" /></span>
               ))}
             </div>
           ))}
@@ -137,7 +137,7 @@ export function Nav({ base = "" }: { base?: string }) {
         <div className="glass border-b border-[var(--line)]">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href={base + "./"} className="font-display font-black text-2xl tracking-tight">
-              VY<span className="text-[#C6FF3D]">R</span>A
+              VY<span className="text-[#2BE08A]">R</span>A
             </a>
             <div className="hidden md:flex items-center gap-8 text-sm font-medium">
               <a href={base + "./#catalogo"} className="navx text-white/80 hover:text-white">Catálogo</a>
@@ -150,7 +150,7 @@ export function Nav({ base = "" }: { base?: string }) {
               <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
                 <ShoppingBag size={20} />
                 {count > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#C6FF3D] text-[#0A0A0F] text-[10px] font-bold flex items-center justify-center">{count}</span>
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#2BE08A] text-[#06120B] text-[10px] font-bold flex items-center justify-center">{count}</span>
                 )}
               </button>
             </div>
@@ -220,18 +220,18 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
             {step === "done" && (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#C6FF3D]/15 flex items-center justify-center mb-5">
-                  <Check size={30} className="text-[#C6FF3D]" />
+                <div className="w-16 h-16 rounded-full bg-[#2BE08A]/15 flex items-center justify-center mb-5">
+                  <Check size={30} className="text-[#2BE08A]" />
                 </div>
                 <p className="font-display font-black text-xl">¡Gracias por tu compra!</p>
-                <p className="text-white/50 text-sm mt-2">Tu pedido <span className="text-[#C6FF3D] font-mono">#VY-{orderId}</span> fue registrado. Te contactaremos por correo para coordinar el pago y envío.</p>
+                <p className="text-white/50 text-sm mt-2">Tu pedido <span className="text-[#2BE08A] font-mono">#VY-{orderId}</span> fue registrado. Te contactaremos por correo para coordinar el pago y envío.</p>
                 <button onClick={() => { onClose(); setStep("cart"); }} className="btn-ghost px-6 py-3 rounded-full mt-7">Seguir comprando</button>
               </div>
             )}
 
             {step === "checkout" && (
               <form onSubmit={placeOrder} className="flex-1 overflow-y-auto p-6 space-y-4">
-                <button type="button" onClick={() => setStep("cart")} className="text-white/45 text-sm font-mono hover:text-[#C6FF3D]">← Volver al carrito</button>
+                <button type="button" onClick={() => setStep("cart")} className="text-white/45 text-sm font-mono hover:text-[#2BE08A]">← Volver al carrito</button>
                 {[
                   { k: "cliente", label: "Nombre completo", type: "text", ph: "Juan García" },
                   { k: "email", label: "Correo electrónico", type: "email", ph: "juan@correo.com" },
@@ -241,21 +241,21 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                     <input type={f.type} required value={form[f.k as keyof typeof form]}
                       onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
                       placeholder={f.ph}
-                      className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C6FF3D]" />
+                      className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#2BE08A]" />
                   </div>
                 ))}
                 <div>
                   <label className="block text-xs font-mono uppercase tracking-wider text-white/40 mb-1.5">País</label>
                   <select value={form.pais} onChange={(e) => setForm({ ...form, pais: e.target.value })}
-                    className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C6FF3D]">
+                    className="w-full glass rounded-xl px-4 py-3 text-sm outline-none focus:border-[#2BE08A]">
                     {["Colombia", "USA", "México", "España", "Chile", "Perú", "Argentina", "Brasil"].map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </div>
                 <label className="flex items-start gap-3 glass rounded-xl p-4 cursor-pointer">
                   <input type="checkbox" checked={promo} onChange={(e) => setPromo(e.target.checked)}
-                    className="mt-0.5 accent-[#C6FF3D] w-4 h-4" />
+                    className="mt-0.5 accent-[#2BE08A] w-4 h-4" />
                   <span className="text-xs text-white/55 leading-relaxed">
-                    Quiero recibir <span className="text-[#C6FF3D]">ofertas exclusivas y novedades</span> de VYRA por correo. Puedo cancelar cuando quiera.
+                    Quiero recibir <span className="text-[#2BE08A]">ofertas exclusivas y novedades</span> de VYRA por correo. Puedo cancelar cuando quiera.
                   </span>
                 </label>
                 <div className="glass rounded-xl p-4 flex justify-between text-sm">
@@ -289,7 +289,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                         <span className="font-mono text-sm w-5 text-center">{l.qty}</span>
                         <button onClick={() => changeQty(i, 1)} className="w-6 h-6 rounded-full glass flex items-center justify-center"><Plus size={12} /></button>
                       </div>
-                      <span className="font-mono text-sm text-[#C6FF3D]">{fmt(l.priceUSD * l.qty, cur)}</span>
+                      <span className="font-mono text-sm text-[#2BE08A]">{fmt(l.priceUSD * l.qty, cur)}</span>
                     </div>
                   </div>
                 </div>
@@ -321,11 +321,11 @@ export function Footer({ base = "" }: { base?: string }) {
       <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <p className="font-display font-black text-3xl mb-3">VY<span className="text-[#C6FF3D]">R</span>A</p>
+            <p className="font-display font-black text-3xl mb-3">VY<span className="text-[#2BE08A]">R</span>A</p>
             <p className="text-white/45 text-sm max-w-xs leading-relaxed">El futuro, a tu puerta. Tecnología y moda curada para Colombia y Estados Unidos.</p>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#C6FF3D] mb-4">Tienda</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-4">Tienda</p>
             <ul className="space-y-2.5">
               <li><a href={base + "./#catalogo"} className="text-white/55 text-sm hover:text-white">Catálogo</a></li>
               <li><a href={base + "./envios/"} className="text-white/55 text-sm hover:text-white">Envíos</a></li>
@@ -333,7 +333,7 @@ export function Footer({ base = "" }: { base?: string }) {
             </ul>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#C6FF3D] mb-4">Legal</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-4">Legal</p>
             <ul className="space-y-2.5">
               <li><a href={base + "./terminos/"} className="text-white/55 text-sm hover:text-white">Términos</a></li>
               <li><a href={base + "./privacidad/"} className="text-white/55 text-sm hover:text-white">Privacidad</a></li>
@@ -386,7 +386,7 @@ export function SocialProof() {
         <motion.div
           initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
           className="fixed bottom-6 left-6 z-40 glass rounded-2xl p-4 pr-6 flex items-center gap-3 max-w-xs">
-          <span className="w-9 h-9 rounded-full bg-[#C6FF3D]/15 flex items-center justify-center text-lg">🛍️</span>
+          <span className="w-9 h-9 rounded-full bg-[#2BE08A]/15 flex items-center justify-center text-lg">🛍️</span>
           <div>
             <p className="text-sm font-medium leading-tight"><strong>{n}</strong> de {c}</p>
             <p className="text-white/50 text-xs mt-0.5">acaba de comprar {p}</p>
@@ -410,7 +410,7 @@ export function Faq() {
   return (
     <section className="relative z-10 max-w-3xl mx-auto px-6 pb-24">
       <div className="text-center mb-10">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#C6FF3D] mb-2">// Dudas</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-2">// Dudas</p>
         <h2 className="font-display font-black text-4xl">Preguntas frecuentes</h2>
       </div>
       <div className="space-y-3">
@@ -418,7 +418,7 @@ export function Faq() {
           <div key={i} className="glass rounded-2xl overflow-hidden">
             <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-4 p-5 text-left">
               <span className="font-medium">{q}</span>
-              {open === i ? <Minus size={18} className="text-[#C6FF3D] shrink-0" /> : <Plus size={18} className="text-[#C6FF3D] shrink-0" />}
+              {open === i ? <Minus size={18} className="text-[#2BE08A] shrink-0" /> : <Plus size={18} className="text-[#2BE08A] shrink-0" />}
             </button>
             {open === i && <div className="px-5 pb-5 text-white/55 text-sm leading-relaxed">{a}</div>}
           </div>
@@ -436,14 +436,14 @@ export function Newsletter() {
     <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
       <div className="glass rounded-3xl p-10 sm:p-14 text-center glow-lime">
         <h2 className="font-display font-black text-3xl sm:text-4xl mb-3">Sé el primero en el próximo drop</h2>
-        <p className="text-white/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#C6FF3D] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
+        <p className="text-white/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#2BE08A] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
         {done ? (
-          <p className="text-[#C6FF3D] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
+          <p className="text-[#2BE08A] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
         ) : (
           <form onSubmit={async (e) => { e.preventDefault(); if (email) { const { addSubscriber } = await import("./supabase"); await addSubscriber(email, "newsletter"); setDone(true); } }}
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com"
-              className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#C6FF3D]" />
+              className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#2BE08A]" />
             <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 10%</button>
           </form>
         )}
@@ -458,7 +458,7 @@ export function LegalLayout({ title, children }: { title: string; children: Reac
       <div className="aurora" /><div className="grain" />
       <Nav base="../" />
       <main className="relative z-10 max-w-3xl mx-auto px-6 py-16">
-        <a href="../" className="text-white/45 text-sm font-mono hover:text-[#C6FF3D]">← Volver a la tienda</a>
+        <a href="../" className="text-white/45 text-sm font-mono hover:text-[#2BE08A]">← Volver a la tienda</a>
         <h1 className="font-display font-black text-4xl mt-6 mb-8">{title}</h1>
         <div className="space-y-5 text-white/60 leading-relaxed text-sm">{children}</div>
       </main>

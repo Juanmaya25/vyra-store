@@ -47,7 +47,7 @@ export default function Page() {
       <header className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-28">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-7 text-xs font-mono uppercase tracking-widest text-[#C6FF3D]">
+            <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-7 text-xs font-mono uppercase tracking-widest text-[#2BE08A]">
               <span className="dot" /> Drop 01 · 2026
             </div>
             <h1 className="font-display font-black leading-[0.95] text-5xl sm:text-6xl lg:text-7xl mb-6">
@@ -70,14 +70,14 @@ export default function Page() {
             </div>
           </div>
           <div className="relative h-[440px] hidden lg:block">
-            <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#7B5CFF]/20 blur-3xl" />
-            <div className="absolute bottom-10 left-10 w-60 h-60 rounded-full bg-[#C6FF3D]/15 blur-3xl" />
+            <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#14C8A0]/20 blur-3xl" />
+            <div className="absolute bottom-10 left-10 w-60 h-60 rounded-full bg-[#2BE08A]/15 blur-3xl" />
             <a href={`producto/${PRODUCTS[0].id}/`} className="absolute top-4 right-8 w-64 float block">
               <div className="pcard glass rounded-3xl p-4 glow-lime">
                 <img src={PRODUCTS[0].images[0]} alt="" className="rounded-2xl w-full h-56 object-cover" />
                 <p className="font-display font-bold mt-3">{PRODUCTS[0].name}</p>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-[#C6FF3D] font-mono">{fmt(PRODUCTS[0].priceUSD, cur)}</span>
+                  <span className="text-[#2BE08A] font-mono">{fmt(PRODUCTS[0].priceUSD, cur)}</span>
                   <Stars value={PRODUCTS[0].rating} />
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function Page() {
               <div className="pcard glass rounded-3xl p-4">
                 <img src={PRODUCTS[4].images[0]} alt="" className="rounded-2xl w-full h-40 object-cover" />
                 <p className="font-display font-bold text-sm mt-3">{PRODUCTS[4].name}</p>
-                <span className="text-[#C6FF3D] font-mono text-sm">{fmt(PRODUCTS[4].priceUSD, cur)}</span>
+                <span className="text-[#2BE08A] font-mono text-sm">{fmt(PRODUCTS[4].priceUSD, cur)}</span>
               </div>
             </a>
           </div>
@@ -97,25 +97,25 @@ export default function Page() {
       <section id="catalogo" className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
         <div className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#C6FF3D] mb-2">// El drop</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#2BE08A] mb-2">// El drop</p>
             <h2 className="font-display font-black text-4xl">Productos curados</h2>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar..."
-                className="glass rounded-full pl-11 pr-4 py-2.5 text-sm w-44 focus:w-56 transition-all outline-none focus:border-[#C6FF3D]" />
+                className="glass rounded-full pl-11 pr-4 py-2.5 text-sm w-44 focus:w-56 transition-all outline-none focus:border-[#2BE08A]" />
             </div>
             <div className="flex gap-2">
               {CATEGORIES.map((c) => (
                 <button key={c} onClick={() => setCat(c)}
-                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${cat === c ? "bg-[#C6FF3D] text-[#0A0A0F] font-bold" : "glass text-white/70 hover:text-white"}`}>
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${cat === c ? "bg-[#2BE08A] text-[#06120B] font-bold" : "glass text-white/70 hover:text-white"}`}>
                   {c}
                 </button>
               ))}
             </div>
             <select value={sort} onChange={(e) => setSort(e.target.value)}
-              className="glass rounded-full px-4 py-2.5 text-sm outline-none focus:border-[#C6FF3D] cursor-pointer">
+              className="glass rounded-full px-4 py-2.5 text-sm outline-none focus:border-[#2BE08A] cursor-pointer">
               <option value="destacados">Destacados</option>
               <option value="precio-asc">Precio: menor a mayor</option>
               <option value="precio-desc">Precio: mayor a menor</option>
@@ -132,7 +132,7 @@ export default function Page() {
                 <div className="relative overflow-hidden">
                   <img src={p.images[0]} alt={p.name} className="pcard-img w-full h-64 object-cover" />
                   {p.badge && (
-                    <span className="absolute top-4 left-4 bg-[#C6FF3D] text-[#0A0A0F] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider">{p.badge}</span>
+                    <span className="absolute top-4 left-4 bg-[#2BE08A] text-[#06120B] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider">{p.badge}</span>
                   )}
                   <button
                     onClick={(e) => { e.preventDefault(); wish.toggle(p.id); }}
@@ -148,7 +148,7 @@ export default function Page() {
                   <p className="text-white/45 text-xs mt-1 mb-3">{p.tagline}</p>
                   <div className="flex items-center gap-2 mb-4">
                     <Stars value={p.rating} />
-                    <span className="text-xs font-mono text-[#C6FF3D]">{p.rating}</span>
+                    <span className="text-xs font-mono text-[#2BE08A]">{p.rating}</span>
                     <span className="text-xs text-white/40">({p.reviewsCount.toLocaleString()})</span>
                   </div>
                   <div className="flex items-end justify-between">
@@ -156,7 +156,7 @@ export default function Page() {
                       <p className="font-display font-bold text-xl">{fmt(p.priceUSD, cur)}</p>
                       <p className="text-white/35 text-xs line-through font-mono">{fmt(p.compareUSD, cur)}</p>
                     </div>
-                    <span className="w-10 h-10 rounded-full bg-[#C6FF3D] text-[#0A0A0F] flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span className="w-10 h-10 rounded-full bg-[#2BE08A] text-[#06120B] flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Plus size={18} strokeWidth={3} />
                     </span>
                   </div>
@@ -177,8 +177,8 @@ export default function Page() {
             { icon: Zap, t: "Productos validados", d: "Solo lo que tiene rating real 4.5★+" },
           ].map(({ icon: Icon, t, d }, i) => (
             <div key={t} className="reveal glass rounded-3xl p-6" style={{ transitionDelay: `${i * 70}ms` }}>
-              <div className="w-12 h-12 rounded-2xl bg-[#C6FF3D]/15 flex items-center justify-center mb-4">
-                <Icon size={22} className="text-[#C6FF3D]" />
+              <div className="w-12 h-12 rounded-2xl bg-[#2BE08A]/15 flex items-center justify-center mb-4">
+                <Icon size={22} className="text-[#2BE08A]" />
               </div>
               <h3 className="font-display font-bold mb-1">{t}</h3>
               <p className="text-white/45 text-sm leading-relaxed">{d}</p>

@@ -8,8 +8,8 @@ export default function Envios() {
     <LegalLayout title="Política de Envíos">
       <p>Enviamos a toda Colombia y Estados Unidos con seguimiento en tiempo real.</p>
       <h2 className="font-display font-bold text-white text-lg pt-4">1. Tiempos de entrega</h2>
-      <p><strong className="text-[#C6FF3D]">Colombia:</strong> 3 a 7 días hábiles según la ciudad. Despacho dentro de las 48h tras confirmar el pedido.</p>
-      <p><strong className="text-[#C6FF3D]">Estados Unidos:</strong> 7 a 14 días hábiles según el destino.</p>
+      <p><strong className="text-[#2BE08A]">Colombia:</strong> 3 a 7 días hábiles según la ciudad. Despacho dentro de las 48h tras confirmar el pedido.</p>
+      <p><strong className="text-[#2BE08A]">Estados Unidos:</strong> 7 a 14 días hábiles según el destino.</p>
       <h2 className="font-display font-bold text-white text-lg pt-4">2. Costos de envío</h2>
       <p>Envío gratis en pedidos superiores a $50 USD. Para pedidos menores, el costo se calcula al finalizar la compra según tu ubicación.</p>
       <h2 className="font-display font-bold text-white text-lg pt-4">3. Pago contra entrega</h2>

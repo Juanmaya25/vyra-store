@@ -22,11 +22,11 @@ const monthly = [
   { m: "Abr", v: 67 }, { m: "May", v: 82 },
 ];
 const byCat = [
-  { name: "Tecnología", value: 62, fill: "#C6FF3D" },
-  { name: "Moda", value: 38, fill: "#7B5CFF" },
+  { name: "Tecnología", value: 62, fill: "#2BE08A" },
+  { name: "Moda", value: 38, fill: "#14C8A0" },
 ];
 const byCountry = [
-  { name: "Colombia", value: 71, fill: "#C6FF3D" },
+  { name: "Colombia", value: 71, fill: "#2BE08A" },
   { name: "USA", value: 29, fill: "#FF4D8D" },
 ];
 const topProducts = [
@@ -44,9 +44,9 @@ const orders = [
 ];
 
 const estadoColor: Record<string, string> = {
-  Enviado: "text-[#C6FF3D] bg-[#C6FF3D]/10",
+  Enviado: "text-[#2BE08A] bg-[#2BE08A]/10",
   Procesando: "text-[#FFB84D] bg-[#FFB84D]/10",
-  Entregado: "text-[#7B5CFF] bg-[#7B5CFF]/10",
+  Entregado: "text-[#14C8A0] bg-[#14C8A0]/10",
 };
 
 function Tip({ active, payload, label }: any) {
@@ -54,7 +54,7 @@ function Tip({ active, payload, label }: any) {
   return (
     <div className="glass rounded-xl px-3 py-2 text-xs font-mono">
       <p className="text-white/50">{label}</p>
-      <p className="text-[#C6FF3D] font-bold">{payload[0].value.toLocaleString()}</p>
+      <p className="text-[#2BE08A] font-bold">{payload[0].value.toLocaleString()}</p>
     </div>
   );
 }
@@ -71,8 +71,8 @@ export default function Admin() {
         <div className="aurora" /><div className="grain" />
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
           className="relative z-10 glass rounded-3xl p-8 w-full max-w-sm">
-          <div className="w-14 h-14 rounded-2xl bg-[#C6FF3D]/15 flex items-center justify-center mb-5">
-            <Lock size={24} className="text-[#C6FF3D]" />
+          <div className="w-14 h-14 rounded-2xl bg-[#2BE08A]/15 flex items-center justify-center mb-5">
+            <Lock size={24} className="text-[#2BE08A]" />
           </div>
           <p className="font-display font-black text-2xl">Panel VYRA</p>
           <p className="text-white/45 text-sm mt-1 mb-6">Acceso solo administrador</p>
@@ -83,7 +83,7 @@ export default function Admin() {
               onChange={(e) => { setPass(e.target.value); setErr(false); }}
               onKeyDown={(e) => e.key === "Enter" && (pass === "vyra2026" ? setAuth(true) : setErr(true))}
               placeholder="Contraseña"
-              className="w-full glass rounded-xl px-4 py-3 pr-11 text-sm outline-none focus:border-[#C6FF3D]"
+              className="w-full glass rounded-xl px-4 py-3 pr-11 text-sm outline-none focus:border-[#2BE08A]"
             />
             <button onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40">
               {show ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -152,11 +152,11 @@ function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C6FF3D] text-[#0A0A0F] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#2BE08A] text-[#06120B] flex items-center justify-center">
               <LayoutDashboard size={20} />
             </div>
             <div>
-              <p className="font-display font-black text-xl">VY<span className="text-[#C6FF3D]">R</span>A · Admin</p>
+              <p className="font-display font-black text-xl">VY<span className="text-[#2BE08A]">R</span>A · Admin</p>
               <p className="text-white/40 text-xs font-mono">Dashboard · datos demo</p>
             </div>
           </div>
@@ -169,10 +169,10 @@ function Dashboard() {
             <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }} className="glass rounded-3xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-[#C6FF3D]/15 flex items-center justify-center">
-                  <Icon size={20} className="text-[#C6FF3D]" />
+                <div className="w-11 h-11 rounded-2xl bg-[#2BE08A]/15 flex items-center justify-center">
+                  <Icon size={20} className="text-[#2BE08A]" />
                 </div>
-                <span className={`flex items-center gap-1 text-xs font-mono font-bold ${up ? "text-[#C6FF3D]" : "text-[#FF4D8D]"}`}>
+                <span className={`flex items-center gap-1 text-xs font-mono font-bold ${up ? "text-[#2BE08A]" : "text-[#FF4D8D]"}`}>
                   {up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}{delta}
                 </span>
               </div>
@@ -191,8 +191,8 @@ function Dashboard() {
               <AreaChart data={revenue}>
                 <defs>
                   <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C6FF3D" stopOpacity={0.5} />
-                    <stop offset="100%" stopColor="#C6FF3D" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#2BE08A" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#2BE08A" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
@@ -200,7 +200,7 @@ function Dashboard() {
                 <YAxis stroke="#8B8B97" fontSize={11} tickLine={false} axisLine={false}
                   tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip content={<Tip />} />
-                <Area type="monotone" dataKey="v" stroke="#C6FF3D" strokeWidth={2.5} fill="url(#g)" />
+                <Area type="monotone" dataKey="v" stroke="#2BE08A" strokeWidth={2.5} fill="url(#g)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -236,12 +236,12 @@ function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                 <XAxis dataKey="m" stroke="#8B8B97" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip content={<Tip />} cursor={{ fill: "rgba(198,255,61,0.05)" }} />
-                <Bar dataKey="v" fill="#7B5CFF" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="v" fill="#14C8A0" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <div className="glass rounded-3xl p-6">
-            <p className="font-display font-bold mb-1 flex items-center gap-2"><Globe size={16} className="text-[#C6FF3D]" /> Ventas por país</p>
+            <p className="font-display font-bold mb-1 flex items-center gap-2"><Globe size={16} className="text-[#2BE08A]" /> Ventas por país</p>
             <p className="text-white/40 text-xs font-mono mb-3">Colombia vs USA</p>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -261,7 +261,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="glass rounded-3xl p-6">
-            <p className="font-display font-bold mb-4 flex items-center gap-2"><Package size={16} className="text-[#C6FF3D]" /> Top productos</p>
+            <p className="font-display font-bold mb-4 flex items-center gap-2"><Package size={16} className="text-[#2BE08A]" /> Top productos</p>
             <div className="space-y-3">
               {topProducts.map((p, i) => (
                 <div key={p.name} className="flex items-center gap-3">
@@ -270,7 +270,7 @@ function Dashboard() {
                     <p className="text-sm font-medium leading-tight">{p.name}</p>
                     <p className="text-white/40 text-xs">{p.sold.toLocaleString()} vendidos</p>
                   </div>
-                  <span className="font-mono text-sm text-[#C6FF3D]">{p.rev}</span>
+                  <span className="font-mono text-sm text-[#2BE08A]">{p.rev}</span>
                 </div>
               ))}
             </div>
@@ -282,7 +282,7 @@ function Dashboard() {
           <p className="font-display font-bold mb-5 flex items-center gap-2">
             Pedidos recientes
             {liveRows.length > 0
-              ? <span className="text-[10px] font-mono bg-[#C6FF3D]/15 text-[#C6FF3D] px-2 py-0.5 rounded-full">● EN VIVO · Supabase</span>
+              ? <span className="text-[10px] font-mono bg-[#2BE08A]/15 text-[#2BE08A] px-2 py-0.5 rounded-full">● EN VIVO · Supabase</span>
               : <span className="text-[10px] font-mono text-white/40">(demo · sin pedidos reales aún)</span>}
           </p>
           <div className="overflow-x-auto">
@@ -299,20 +299,20 @@ function Dashboard() {
               <tbody>
                 {rows.map((o, i) => (
                   <tr key={i} className="border-b border-[var(--line)] last:border-0">
-                    <td className="py-3.5 font-mono text-[#C6FF3D]">{o.id}</td>
+                    <td className="py-3.5 font-mono text-[#2BE08A]">{o.id}</td>
                     <td className="py-3.5">{o.cliente}</td>
                     <td className="py-3.5 text-white/60">{o.pais}</td>
                     <td className="py-3.5 font-mono">{o.total}</td>
                     <td className="py-3.5">
                       {o.rawId ? (
                         <select value={o.estado} onChange={(e) => setStatus(o.rawId, e.target.value)}
-                          className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>
+                          className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#2BE08A] bg-[#2BE08A]/10"}`}>
                           {["Procesando", "Enviado", "Entregado", "Cancelado"].map((s) => (
                             <option key={s} value={s} className="bg-[#14141E] text-white">{s}</option>
                           ))}
                         </select>
                       ) : (
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#C6FF3D] bg-[#C6FF3D]/10"}`}>{o.estado}</span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#2BE08A] bg-[#2BE08A]/10"}`}>{o.estado}</span>
                       )}
                     </td>
                   </tr>

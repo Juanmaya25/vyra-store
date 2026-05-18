@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Devoluciones y Garantía · VYRA" };
 export default function Devoluciones() {
   return (
     <LegalLayout title="Devoluciones y Garantía">
-      <p>Tu satisfacción es nuestra prioridad. Por eso ofrecemos la <strong className="text-[#C6FF3D]">Garantía VYRA de 30 días</strong>.</p>
+      <p>Tu satisfacción es nuestra prioridad. Por eso ofrecemos la <strong className="text-[#2BE08A]">Garantía VYRA de 30 días</strong>.</p>
       <h2 className="font-display font-bold text-white text-lg pt-4">1. Derecho de retracto</h2>
       <p>Conforme a la ley colombiana, tienes 5 días hábiles desde la entrega para ejercer el derecho de retracto, siempre que el producto esté sin usar y en su empaque original.</p>
       <h2 className="font-display font-bold text-white text-lg pt-4">2. Garantía de 30 días</h2>

@@ -28,8 +28,8 @@ export default function Cuenta() {
 
   const estadoColor: Record<string, string> = {
     Procesando: "text-[#FFB84D] bg-[#FFB84D]/10",
-    Enviado: "text-[#C6FF3D] bg-[#C6FF3D]/10",
-    Entregado: "text-[#7B5CFF] bg-[#7B5CFF]/10",
+    Enviado: "text-[#2BE08A] bg-[#2BE08A]/10",
+    Entregado: "text-[#14C8A0] bg-[#14C8A0]/10",
   };
 
   return (
@@ -41,7 +41,7 @@ export default function Cuenta() {
 
         {ready && !user && (
           <div className="glass rounded-3xl p-12 text-center">
-            <LogIn size={40} className="text-[#C6FF3D] mx-auto mb-4" />
+            <LogIn size={40} className="text-[#2BE08A] mx-auto mb-4" />
             <h1 className="font-display font-black text-2xl mb-2">Inicia sesión</h1>
             <p className="text-white/50 mb-7">Entra con Google para ver el historial de tus pedidos.</p>
             <button onClick={loginGoogle} className="btn-lime px-8 py-3.5 rounded-full">Entrar con Google</button>
@@ -53,7 +53,7 @@ export default function Cuenta() {
             <div className="flex items-center gap-4 mb-10">
               {user.avatar
                 ? <img src={user.avatar} alt="" className="w-14 h-14 rounded-full" />
-                : <span className="w-14 h-14 rounded-full bg-[#C6FF3D] text-[#0A0A0F] flex items-center justify-center text-xl font-bold">{user.name[0]?.toUpperCase()}</span>}
+                : <span className="w-14 h-14 rounded-full bg-[#2BE08A] text-[#06120B] flex items-center justify-center text-xl font-bold">{user.name[0]?.toUpperCase()}</span>}
               <div>
                 <h1 className="font-display font-black text-2xl">Hola, {user.name.split(" ")[0]}</h1>
                 <p className="text-white/45 text-sm">{user.email}</p>
@@ -76,7 +76,7 @@ export default function Cuenta() {
                 <div key={o.id} className="glass rounded-2xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div>
-                      <span className="font-mono text-[#C6FF3D]">#VY-{o.id}</span>
+                      <span className="font-mono text-[#2BE08A]">#VY-{o.id}</span>
                       <span className="text-white/40 text-xs ml-3">{new Date(o.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" })}</span>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-white/60 bg-white/5"}`}>{o.estado}</span>
