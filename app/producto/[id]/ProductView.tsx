@@ -7,6 +7,7 @@ import { fmt } from "../../products";
 import { useCart, useWishlist, pushRecent } from "../../cart";
 import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, RecentlyViewed, BackToTop } from "../../ui";
 import { listReviews, addReview, type ReviewRow } from "../../reviews";
+import { useAuth } from "../../auth";
 
 export default function ProductView({ product, related }: { product: Product; related: Product[] }) {
   const { add } = useCart();
@@ -22,10 +23,16 @@ export default function ProductView({ product, related }: { product: Product; re
   const [rForm, setRForm] = useState({ author: "", rating: 5, text: "" });
   const [rSent, setRSent] = useState(false);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     pushRecent(product.id);
     listReviews(product.id).then(setCustReviews);
   }, [product.id]);
+
+  useEffect(() => {
+    if (user) setRForm((f) => ({ ...f, author: user.name }));
+  }, [user]);
 
   async function submitReview(e: React.FormEvent) {
     e.preventDefault();
@@ -198,8 +205,16 @@ export default function ProductView({ product, related }: { product: Product; re
                 <p className="text-[#15B968] text-sm flex items-center gap-2"><Check size={16} /> ¡Gracias por tu opinión!</p>
               ) : (
                 <div className="space-y-3">
-                  <input required value={rForm.author} onChange={(e) => setRForm({ ...rForm, author: e.target.value })}
-                    placeholder="Tu nombre" className="w-full glass rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#15B968]" />
+                  {user ? (
+                    <div className="flex items-center gap-2 glass rounded-xl px-3 py-2.5 text-sm">
+                      {user.avatar && <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />}
+                      <span className="font-medium">{user.name}</span>
+                      <span className="text-[#14201A]/40 text-xs ml-auto">cuenta verificada ✓</span>
+                    </div>
+                  ) : (
+                    <input required value={rForm.author} onChange={(e) => setRForm({ ...rForm, author: e.target.value })}
+                      placeholder="Tu nombre" className="w-full glass rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#15B968]" />
+                  )}
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <button type="button" key={n} onClick={() => setRForm({ ...rForm, rating: n })} aria-label={`${n} estrellas`}>
