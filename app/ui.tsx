@@ -173,12 +173,12 @@ export function Nav({ base = "" }: { base?: string }) {
 }
 
 const SPIN_PRIZES = [
-  { label: "5% OFF", code: "BIENVENIDA5", color: "#15B968" },
-  { label: "Sigue", code: "", color: "#0B3D2A" },
-  { label: "8% OFF", code: "VYRA8", color: "#0FA88A" },
-  { label: "Envío gratis", code: "DROP10", color: "#0B3D2A" },
-  { label: "10% OFF", code: "DROP10", color: "#15B968" },
-  { label: "Casi...", code: "", color: "#0FA88A" },
+  { label: "5% OFF", percent: 5, color: "#15B968" },
+  { label: "Sigue", percent: 0, color: "#0B3D2A" },
+  { label: "8% OFF", percent: 8, color: "#0FA88A" },
+  { label: "Envío gratis", percent: 10, color: "#0B3D2A" },
+  { label: "10% OFF", percent: 10, color: "#15B968" },
+  { label: "Casi...", percent: 0, color: "#0FA88A" },
 ];
 const SEG = 360 / SPIN_PRIZES.length;
 
@@ -216,12 +216,20 @@ function SpinWheel() {
     const idx = Math.floor(Math.random() * SPIN_PRIZES.length);
     const target = 360 * 7 + (360 - idx * SEG - SEG / 2);
     setRot(target);
-    setTimeout(() => {
+    setTimeout(async () => {
       setSpinning(false);
-      setResult(SPIN_PRIZES[idx]);
       localStorage.setItem("vyra_spin_v2", "1");
       setDone(true);
-      if (SPIN_PRIZES[idx].code) {
+      const prize = SPIN_PRIZES[idx];
+      if (prize.percent > 0) {
+        // Genera un código único de un solo uso
+        const rnd = Math.random().toString(36).slice(2, 7).toUpperCase();
+        const newCode = `RULETA-${rnd}`;
+        try {
+          const { addCoupon } = await import("./supabase");
+          await addCoupon(newCode, prize.percent, true);
+        } catch { /* si falla, igual se muestra el código */ }
+        setResult({ label: prize.label, code: newCode });
         const cols = ["#15B968", "#0FA88A", "#E0457E", "#FFB84D", "#14201A"];
         setPieces(Array.from({ length: 60 }).map((_, i) => ({
           left: `${Math.random() * 100}%`,
@@ -232,6 +240,8 @@ function SpinWheel() {
           h: `${10 + Math.random() * 8}px`,
         })));
         setTimeout(() => setPieces([]), 4000);
+      } else {
+        setResult({ label: prize.label, code: "" });
       }
     }, 5200);
   }
@@ -368,8 +378,8 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const [sending, setSending] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
   const [coupon, setCoupon] = useState("");
-  const [applied, setApplied] = useState<{ code: string; pct: number } | null>(null);
-  const [couponErr, setCouponErr] = useState(false);
+  const [applied, setApplied] = useState<{ code: string; pct: number; single?: boolean } | null>(null);
+  const [couponErr, setCouponErr] = useState("");
 
   const FALLBACK: Record<string, number> = { BIENVENIDA5: 5, VYRA8: 8, DROP10: 10 };
   const [coupons, setCoupons] = useState<Record<string, number>>(FALLBACK);
@@ -388,10 +398,17 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     })();
   }, []);
 
-  function applyCoupon() {
+  async function applyCoupon() {
     const code = coupon.trim().toUpperCase();
-    if (coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(false); }
-    else { setApplied(null); setCouponErr(true); }
+    if (!code) return;
+    // Cupones reutilizables precargados (rápido)
+    if (coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(""); return; }
+    // Buscar en Supabase (incluye códigos de ruleta de un solo uso)
+    const { getCoupon } = await import("./supabase");
+    const c = await getCoupon(code);
+    if (!c) { setApplied(null); setCouponErr("Cupón inválido"); return; }
+    if (c.single_use && c.used) { setApplied(null); setCouponErr("Este código ya fue usado"); return; }
+    setApplied({ code: c.code, pct: c.percent, single: c.single_use }); setCouponErr("");
   }
 
   useEffect(() => {
@@ -413,6 +430,10 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         coupon: applied?.code ?? null,
       }).select("id").single();
       if (error) throw error;
+      if (applied?.single) {
+        const { markCouponUsed } = await import("./supabase");
+        await markCouponUsed(applied.code);
+      }
       if (promo) await addSubscriber(form.email, "checkout", form.cliente);
       setOrderId(data?.id ?? null);
       clear();
@@ -536,12 +557,12 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             {step === "cart" && lines.length > 0 && (
               <div className="p-6 border-t border-[var(--line)]">
                 <div className="flex gap-2 mb-4">
-                  <input value={coupon} onChange={(e) => { setCoupon(e.target.value); setCouponErr(false); }}
+                  <input value={coupon} onChange={(e) => { setCoupon(e.target.value); setCouponErr(""); }}
                     placeholder="Código de descuento"
                     className="flex-1 glass rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#15B968] uppercase" />
                   <button onClick={applyCoupon} className="btn-ghost px-4 py-2.5 rounded-xl text-sm">Aplicar</button>
                 </div>
-                {couponErr && <p className="text-[#E0457E] text-xs mb-3 font-mono">Cupón inválido. Prueba: BIENVENIDA5</p>}
+                {couponErr && <p className="text-[#E0457E] text-xs mb-3 font-mono">{couponErr}</p>}
                 {applied && (
                   <div className="flex justify-between text-sm mb-2 text-[#15B968]">
                     <span>Cupón {applied.code} (−{applied.pct}%)</span>

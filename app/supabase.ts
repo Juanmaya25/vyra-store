@@ -7,7 +7,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hEWG33zkWc6exp6DvLjf6g_zK10DH93
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-export type Coupon = { id?: number; code: string; percent: number };
+export type Coupon = { id?: number; code: string; percent: number; single_use?: boolean; used?: boolean };
 
 export async function listCoupons(): Promise<Coupon[]> {
   try {
@@ -16,11 +16,24 @@ export async function listCoupons(): Promise<Coupon[]> {
   } catch { return []; }
 }
 
-export async function addCoupon(code: string, percent: number): Promise<boolean> {
+export async function getCoupon(code: string): Promise<Coupon | null> {
   try {
-    const { error } = await supabase.from("coupons").insert({ code: code.toUpperCase().trim(), percent });
+    const { data } = await supabase.from("coupons").select("*").eq("code", code.toUpperCase().trim()).single();
+    return data ?? null;
+  } catch { return null; }
+}
+
+export async function addCoupon(code: string, percent: number, singleUse = false): Promise<boolean> {
+  try {
+    const { error } = await supabase.from("coupons").insert({ code: code.toUpperCase().trim(), percent, single_use: singleUse });
     return !error;
   } catch { return false; }
+}
+
+export async function markCouponUsed(code: string) {
+  try {
+    await supabase.from("coupons").update({ used: true }).eq("code", code.toUpperCase().trim());
+  } catch { /* ignore */ }
 }
 
 export async function deleteCoupon(id: number): Promise<boolean> {
