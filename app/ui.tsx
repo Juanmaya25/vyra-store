@@ -390,9 +390,12 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     (async () => {
       const { listCoupons } = await import("./supabase");
       const list = await listCoupons();
-      if (list.length) {
+      // Solo cupones REUTILIZABLES en la lista rápida.
+      // Los de un solo uso (ruleta) pasan siempre por la validación de "usado".
+      const reusable = list.filter((c) => !c.single_use);
+      if (reusable.length) {
         const map: Record<string, number> = {};
-        list.forEach((c) => { map[c.code.toUpperCase()] = c.percent; });
+        reusable.forEach((c) => { map[c.code.toUpperCase()] = c.percent; });
         setCoupons(map);
       }
     })();
