@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, ArrowRight, Truck, ShieldCheck, RefreshCw, Zap, Plus, Heart } from "lucide-react";
-import { PRODUCTS, CATEGORIES, fmt } from "./products";
+import { Search, ArrowRight, Truck, ShieldCheck, RefreshCw, Zap, Plus, Heart, Eye, X, ShoppingBag, Check } from "lucide-react";
+import { PRODUCTS, CATEGORIES, fmt, type Product } from "./products";
 import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, Faq, Newsletter, SocialProof, OfferBanner, BackToTop, RecentlyViewed } from "./ui";
-import { useWishlist } from "./cart";
+import { useWishlist, useCart } from "./cart";
 
 function useReveal() {
   useEffect(() => {
@@ -24,6 +24,9 @@ export default function Page() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("destacados");
   const wish = useWishlist();
+  const { add } = useCart();
+  const [quick, setQuick] = useState<Product | null>(null);
+  const [qAdded, setQAdded] = useState(false);
   useReveal();
 
   const filtered = useMemo(() => {
@@ -142,6 +145,11 @@ export default function Page() {
                     <Heart size={16} className={wish.has(p.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-[#14201A]/70"} />
                   </button>
                   <span className="absolute bottom-3 right-3 glass rounded-full px-2.5 py-1 text-[10px] font-mono">{p.sold.toLocaleString()} vendidos</span>
+                  <button
+                    onClick={(e) => { e.preventDefault(); setQuick(p); setQAdded(false); }}
+                    className="absolute bottom-3 left-3 glass rounded-full px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#15B968]">
+                    <Eye size={13} /> Vista rápida
+                  </button>
                 </div>
                 <div className="p-5">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-[#14201A]/40 mb-1">{p.category}</p>
@@ -195,6 +203,32 @@ export default function Page() {
       <WhatsAppFloat />
       <SocialProof />
       <BackToTop />
+
+      {quick && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setQuick(null)} />
+          <div className="relative glass rounded-3xl max-w-2xl w-full grid sm:grid-cols-2 overflow-hidden">
+            <button onClick={() => setQuick(null)} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full glass flex items-center justify-center"><X size={16} /></button>
+            <img src={quick.images[0]} alt={quick.name} className="w-full h-64 sm:h-full object-cover" />
+            <div className="p-6">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#14201A]/40 mb-1">{quick.category}</p>
+              <h3 className="font-display font-black text-xl">{quick.name}</h3>
+              <p className="text-[#14201A]/50 text-sm mt-1">{quick.tagline}</p>
+              <div className="flex items-center gap-2 mt-3">
+                <Stars value={quick.rating} />
+                <span className="text-xs text-[#14201A]/40">({quick.reviewsCount.toLocaleString()})</span>
+              </div>
+              <p className="font-display font-black text-2xl mt-4">{fmt(quick.priceUSD, cur)}</p>
+              <p className="text-[#14201A]/55 text-sm mt-3 leading-relaxed line-clamp-3">{quick.description}</p>
+              <button onClick={() => { add(quick, quick.colors?.[0]?.name ?? quick.sizes?.[0] ?? "Único"); setQAdded(true); }}
+                className="btn-lime w-full py-3.5 rounded-2xl mt-5 flex items-center justify-center gap-2">
+                {qAdded ? <><Check size={18} /> Añadido</> : <><ShoppingBag size={18} /> Añadir al carrito</>}
+              </button>
+              <a href={`producto/${quick.id}/`} className="block text-center text-sm text-[#15B968] mt-3 hover:underline">Ver detalles completos →</a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

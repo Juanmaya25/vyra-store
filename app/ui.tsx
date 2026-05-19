@@ -167,7 +167,92 @@ export function Nav({ base = "" }: { base?: string }) {
       </nav>
       <CartDrawer open={open} onClose={() => setOpen(false)} />
       <CookieConsent />
+      <SpinWheel />
     </>
+  );
+}
+
+function SpinWheel() {
+  const PRIZES = [
+    { label: "10% OFF", code: "BIENVENIDA10" },
+    { label: "Sigue participando", code: "" },
+    { label: "15% OFF", code: "VYRA15" },
+    { label: "Envío gratis", code: "DROP20" },
+    { label: "20% OFF", code: "DROP20" },
+    { label: "Casi...", code: "" },
+  ];
+  const [open, setOpen] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [rot, setRot] = useState(0);
+  const [result, setResult] = useState<{ label: string; code: string } | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("vyra_spin")) return;
+    const t = setTimeout(() => setOpen(true), 9000);
+    return () => clearTimeout(t);
+  }, []);
+
+  function spin() {
+    if (spinning) return;
+    setSpinning(true);
+    setResult(null);
+    const idx = Math.floor(Math.random() * PRIZES.length);
+    const turns = 6;
+    const target = turns * 360 + (360 - idx * (360 / PRIZES.length)) - 30;
+    setRot(target);
+    setTimeout(() => {
+      setSpinning(false);
+      setResult(PRIZES[idx]);
+      localStorage.setItem("vyra_spin", "1");
+    }, 4200);
+  }
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setOpen(false); localStorage.setItem("vyra_spin", "1"); }} />
+      <div className="relative glass rounded-3xl p-8 max-w-sm w-full text-center">
+        <button onClick={() => { setOpen(false); localStorage.setItem("vyra_spin", "1"); }}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full glass flex items-center justify-center"><X size={16} /></button>
+        <p className="font-display font-black text-2xl mb-1">🎡 Gira y gana</p>
+        <p className="text-[#14201A]/50 text-sm mb-6">Tienes 1 giro gratis. ¡Suerte!</p>
+
+        <div className="relative w-56 h-56 mx-auto mb-6">
+          <div className="absolute left-1/2 -top-2 -translate-x-1/2 z-10 text-[#15B968] text-2xl">▼</div>
+          <div className="w-full h-full rounded-full border-4 border-[#15B968] overflow-hidden"
+            style={{
+              transform: `rotate(${rot}deg)`,
+              transition: spinning ? "transform 4s cubic-bezier(0.16,1,0.3,1)" : "none",
+              background: `conic-gradient(#15B968 0deg 60deg, #0FA88A 60deg 120deg, #15B968 120deg 180deg, #0FA88A 180deg 240deg, #15B968 240deg 300deg, #0FA88A 300deg 360deg)`,
+            }}>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white border-2 border-[#15B968] flex items-center justify-center font-display font-black text-[#15B968]">VY</div>
+          </div>
+        </div>
+
+        {!result ? (
+          <button onClick={spin} disabled={spinning} className="btn-lime w-full py-3.5 rounded-full disabled:opacity-60">
+            {spinning ? "Girando..." : "¡GIRAR!"}
+          </button>
+        ) : result.code ? (
+          <div>
+            <p className="font-display font-bold text-lg text-[#15B968]">🎁 ¡Ganaste {result.label}!</p>
+            <p className="text-[#14201A]/55 text-sm mt-1 mb-3">Usa este código en el carrito:</p>
+            <button onClick={() => { navigator.clipboard?.writeText(result.code); setCopied(true); }}
+              className="w-full glass rounded-xl py-3 font-mono font-bold text-[#15B968] border-2 border-dashed border-[#15B968]">
+              {result.code} {copied ? "✓ copiado" : "· copiar"}
+            </button>
+          </div>
+        ) : (
+          <div>
+            <p className="font-display font-bold text-lg">¡Casi! 😅</p>
+            <p className="text-[#14201A]/55 text-sm mt-1">Esta vez no, pero igual tienes <span className="text-[#15B968] font-mono font-bold">BIENVENIDA10</span></p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -318,6 +403,20 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <div className="text-center py-20">
                   <ShoppingBag size={40} className="mx-auto text-[#14201A]/20 mb-4" />
                   <p className="text-[#14201A]/45">Tu carrito está vacío</p>
+                </div>
+              )}
+              {lines.length > 0 && (
+                <div className="glass rounded-2xl p-4">
+                  {total >= 50 ? (
+                    <p className="text-sm text-[#15B968] font-medium flex items-center gap-2">🎉 ¡Tienes envío GRATIS!</p>
+                  ) : (
+                    <p className="text-sm text-[#14201A]/65">
+                      Te faltan <span className="text-[#15B968] font-bold font-mono">{fmt(50 - total, cur)}</span> para <strong>envío gratis</strong>
+                    </p>
+                  )}
+                  <div className="h-2 rounded-full bg-black/10 mt-2 overflow-hidden">
+                    <div className="h-full bg-[#15B968] transition-all" style={{ width: `${Math.min(100, (total / 50) * 100)}%` }} />
+                  </div>
                 </div>
               )}
               {lines.map((l, i) => (
