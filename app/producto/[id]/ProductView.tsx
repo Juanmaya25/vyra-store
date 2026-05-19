@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw, Heart, Flame, Eye, Star } from "lucide-react";
+import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw, Heart, Flame, Eye, Star, Share2 } from "lucide-react";
 import type { Product } from "../../products";
 import { fmt } from "../../products";
 import { useCart, useWishlist, pushRecent } from "../../cart";
@@ -53,6 +53,15 @@ export default function ProductView({ product, related }: { product: Product; re
     setTimeout(() => setAdded(false), 1600);
   }
 
+  async function shareProduct() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (navigator.share) {
+      try { await navigator.share({ title: product.name, text: product.tagline, url }); } catch { /* cancelado */ }
+    } else {
+      try { await navigator.clipboard.writeText(url); alert("Enlace copiado ✓"); } catch { /* ignore */ }
+    }
+  }
+
   return (
     <div className="relative min-h-screen">
       <div className="aurora" /><div className="grain" />
@@ -86,10 +95,16 @@ export default function ProductView({ product, related }: { product: Product; re
             )}
             <div className="flex items-start justify-between gap-4 mt-3">
               <h1 className="font-display font-black text-3xl sm:text-4xl">{product.name}</h1>
-              <button onClick={() => wish.toggle(product.id)} aria-label="Favorito"
-                className="w-11 h-11 rounded-full glass flex items-center justify-center shrink-0 hover:scale-110 transition-transform">
-                <Heart size={18} className={wish.has(product.id) ? "fill-[#FF4D8D] text-[#FF4D8D]" : "text-[#14201A]/70"} />
-              </button>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={shareProduct} aria-label="Compartir"
+                  className="w-11 h-11 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                  <Share2 size={17} className="text-[#14201A]/70" />
+                </button>
+                <button onClick={() => wish.toggle(product.id)} aria-label="Favorito"
+                  className="w-11 h-11 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                  <Heart size={18} className={wish.has(product.id) ? "fill-[#E0457E] text-[#E0457E]" : "text-[#14201A]/70"} />
+                </button>
+              </div>
             </div>
             <p className="text-[#14201A]/50 mt-2">{product.tagline}</p>
 

@@ -166,7 +166,29 @@ export function Nav({ base = "" }: { base?: string }) {
         </div>
       </nav>
       <CartDrawer open={open} onClose={() => setOpen(false)} />
+      <CookieConsent />
     </>
+  );
+}
+
+function CookieConsent() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (!localStorage.getItem("vyra_cookies")) setShow(true);
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-sm z-50 glass rounded-2xl p-5">
+      <p className="text-sm text-[#14201A]/70 leading-relaxed">
+        Usamos almacenamiento local para recordar tu carrito y preferencias. Al continuar aceptas nuestra{" "}
+        <a href="/vyra-store/privacidad/" className="text-[#15B968] underline">política de privacidad</a>.
+      </p>
+      <div className="flex gap-2 mt-3">
+        <button onClick={() => { localStorage.setItem("vyra_cookies", "1"); setShow(false); }}
+          className="btn-lime px-4 py-2 rounded-lg text-sm flex-1">Aceptar</button>
+        <a href="/vyra-store/privacidad/" className="btn-ghost px-4 py-2 rounded-lg text-sm">Más info</a>
+      </div>
+    </div>
   );
 }
 
@@ -362,6 +384,7 @@ export function Footer({ base = "" }: { base?: string }) {
             <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-4">Tienda</p>
             <ul className="space-y-2.5">
               <li><a href={base + "./#catalogo"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Catálogo</a></li>
+              <li><a href={base + "./rastreo/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Rastrear pedido</a></li>
               <li><a href={base + "./envios/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Envíos</a></li>
               <li><a href={base + "./devoluciones/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Devoluciones</a></li>
             </ul>
@@ -369,6 +392,8 @@ export function Footer({ base = "" }: { base?: string }) {
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-4">Legal</p>
             <ul className="space-y-2.5">
+              <li><a href={base + "./nosotros/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Sobre nosotros</a></li>
+              <li><a href={base + "./contacto/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Contacto</a></li>
               <li><a href={base + "./terminos/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Términos</a></li>
               <li><a href={base + "./privacidad/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Privacidad</a></li>
               <li><a href={base + "./admin/"} className="text-[#14201A]/55 text-sm hover:text-[#14201A]">Panel admin</a></li>

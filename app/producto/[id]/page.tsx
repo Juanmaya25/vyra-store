@@ -26,5 +26,31 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const product = PRODUCTS.find((x) => x.id === id) ?? PRODUCTS[0];
   const related = PRODUCTS.filter((x) => x.category === product.category && x.id !== product.id).slice(0, 3);
-  return <ProductView product={product} related={related} />;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.images,
+    description: product.description,
+    brand: { "@type": "Brand", name: "VYRA" },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "USD",
+      price: product.priceUSD,
+      availability: "https://schema.org/InStock",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: product.rating,
+      reviewCount: product.reviewsCount,
+    },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ProductView product={product} related={related} />
+    </>
+  );
 }
