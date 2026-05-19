@@ -401,17 +401,26 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     })();
   }, []);
 
+  function usedLocally(code: string): boolean {
+    try { return (JSON.parse(localStorage.getItem("vyra_used_codes") || "[]") as string[]).includes(code.toUpperCase()); }
+    catch { return false; }
+  }
+
   async function applyCoupon() {
     const code = coupon.trim().toUpperCase();
     if (!code) return;
-    // Cupones reutilizables precargados (rápido)
-    if (coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(""); return; }
-    // Buscar en Supabase (incluye códigos de ruleta de un solo uso)
+    const isSingle = code.startsWith("RULETA-");
+    // Cupones reutilizables precargados (rápido) — nunca los de ruleta
+    if (!isSingle && coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(""); return; }
+    // Buscar en Supabase
     const { getCoupon } = await import("./supabase");
     const c = await getCoupon(code);
     if (!c) { setApplied(null); setCouponErr("Cupón inválido"); return; }
-    if (c.single_use && c.used) { setApplied(null); setCouponErr("Este código ya fue usado"); return; }
-    setApplied({ code: c.code, pct: c.percent, single: c.single_use }); setCouponErr("");
+    const single = isSingle || !!c.single_use;
+    if (single && (c.used || usedLocally(code))) {
+      setApplied(null); setCouponErr("Este código ya fue usado"); return;
+    }
+    setApplied({ code: c.code, pct: c.percent, single }); setCouponErr("");
   }
 
   useEffect(() => {
@@ -436,6 +445,11 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
       if (applied?.single) {
         const { markCouponUsed } = await import("./supabase");
         await markCouponUsed(applied.code);
+        try {
+          const u = JSON.parse(localStorage.getItem("vyra_used_codes") || "[]") as string[];
+          if (!u.includes(applied.code.toUpperCase())) u.push(applied.code.toUpperCase());
+          localStorage.setItem("vyra_used_codes", JSON.stringify(u));
+        } catch { /* ignore */ }
       }
       if (promo) await addSubscriber(form.email, "checkout", form.cliente);
       setOrderId(data?.id ?? null);
