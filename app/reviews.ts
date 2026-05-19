@@ -22,11 +22,12 @@ export async function listReviews(productId: string): Promise<ReviewRow[]> {
   }
 }
 
-export async function addReview(r: ReviewRow): Promise<boolean> {
+export async function addReview(r: ReviewRow): Promise<{ ok: boolean; msg?: string }> {
   try {
     const { error } = await supabase.from("reviews").insert(r);
-    return !error;
-  } catch {
-    return false;
+    if (error) return { ok: false, msg: `${error.code ?? ""} ${error.message ?? ""}`.trim() };
+    return { ok: true };
+  } catch (e: any) {
+    return { ok: false, msg: e?.message ?? "error de red" };
   }
 }

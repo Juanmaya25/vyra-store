@@ -29,14 +29,14 @@ export default function ProductView({ product, related }: { product: Product; re
 
   async function submitReview(e: React.FormEvent) {
     e.preventDefault();
-    const ok = await addReview({ product_id: product.id, author: rForm.author, rating: rForm.rating, text: rForm.text });
-    if (ok) {
+    const res = await addReview({ product_id: product.id, author: rForm.author, rating: rForm.rating, text: rForm.text });
+    if (res.ok) {
       setCustReviews([{ ...rForm, product_id: product.id, created_at: new Date().toISOString() }, ...custReviews]);
       setRForm({ author: "", rating: 5, text: "" });
       setRSent(true);
       setTimeout(() => setRSent(false), 2500);
     } else {
-      alert("No se pudo enviar la reseña. Ejecuta SUPABASE_REVIEWS.sql en Supabase.");
+      alert("Error al enviar la reseña:\n\n" + (res.msg || "desconocido"));
     }
   }
 
