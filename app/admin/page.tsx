@@ -289,6 +289,7 @@ function Dashboard() {
           </div>
         </div>
 
+        <CouponManager />
         <PricingEngine />
 
         {/* Orders */}
@@ -387,6 +388,67 @@ function PricingEngine() {
             {competitive ? "✓ Competitivo" : "✗ Estás caro"}
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CouponManager() {
+  const [list, setList] = useState<{ id?: number; code: string; percent: number }[]>([]);
+  const [code, setCode] = useState("");
+  const [percent, setPercent] = useState(10);
+  const [busy, setBusy] = useState(false);
+
+  async function load() {
+    const { listCoupons } = await import("../supabase");
+    setList(await listCoupons());
+  }
+  useEffect(() => { load(); }, []);
+
+  async function add() {
+    if (!code.trim() || percent < 1) return;
+    setBusy(true);
+    const { addCoupon } = await import("../supabase");
+    const ok = await addCoupon(code, percent);
+    setBusy(false);
+    if (ok) { setCode(""); setPercent(10); load(); }
+    else alert("No se pudo crear (¿código repetido? ¿corriste SUPABASE_COUPONS.sql?)");
+  }
+
+  async function remove(id?: number) {
+    if (!id) return;
+    const { deleteCoupon } = await import("../supabase");
+    if (await deleteCoupon(id)) load();
+  }
+
+  return (
+    <div className="glass rounded-3xl p-6 mb-6">
+      <p className="font-display font-bold mb-1 flex items-center gap-2">🎟️ Gestor de cupones</p>
+      <p className="text-[#14201A]/40 text-xs font-mono mb-5">Crea o elimina códigos. Los clientes los pueden canjear en el carrito.</p>
+
+      <div className="flex flex-wrap gap-3 mb-5">
+        <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="CÓDIGO (ej: VERANO15)"
+          className="flex-1 min-w-40 glass rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#15B968] uppercase font-mono" />
+        <div className="flex items-center gap-2 glass rounded-xl px-3">
+          <input type="number" value={percent} onChange={(e) => setPercent(Number(e.target.value))} min={1} max={90}
+            className="w-16 bg-transparent py-2.5 text-sm outline-none text-center" />
+          <span className="text-[#14201A]/40 text-sm">% OFF</span>
+        </div>
+        <button onClick={add} disabled={busy} className="btn-lime px-6 py-2.5 rounded-xl text-sm disabled:opacity-60">
+          {busy ? "..." : "+ Crear cupón"}
+        </button>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {list.length === 0 && <p className="text-[#14201A]/40 text-sm">No hay cupones. Crea el primero o ejecuta SUPABASE_COUPONS.sql.</p>}
+        {list.map((c) => (
+          <div key={c.id} className="flex items-center gap-2 glass rounded-full pl-4 pr-2 py-1.5">
+            <span className="font-mono font-bold text-[#15B968] text-sm">{c.code}</span>
+            <span className="text-[#14201A]/50 text-xs">−{c.percent}%</span>
+            <button onClick={() => remove(c.id)} aria-label="Eliminar"
+              className="w-6 h-6 rounded-full hover:bg-[#E0457E]/15 text-[#E0457E] flex items-center justify-center text-xs">✕</button>
+          </div>
+        ))}
       </div>
     </div>
   );

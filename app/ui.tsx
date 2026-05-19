@@ -371,13 +371,26 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const [applied, setApplied] = useState<{ code: string; pct: number } | null>(null);
   const [couponErr, setCouponErr] = useState(false);
 
-  const COUPONS: Record<string, number> = { BIENVENIDA5: 5, VYRA8: 8, DROP10: 10 };
+  const FALLBACK: Record<string, number> = { BIENVENIDA5: 5, VYRA8: 8, DROP10: 10 };
+  const [coupons, setCoupons] = useState<Record<string, number>>(FALLBACK);
   const discount = applied ? total * (applied.pct / 100) : 0;
   const finalTotal = total - discount;
 
+  useEffect(() => {
+    (async () => {
+      const { listCoupons } = await import("./supabase");
+      const list = await listCoupons();
+      if (list.length) {
+        const map: Record<string, number> = {};
+        list.forEach((c) => { map[c.code.toUpperCase()] = c.percent; });
+        setCoupons(map);
+      }
+    })();
+  }, []);
+
   function applyCoupon() {
     const code = coupon.trim().toUpperCase();
-    if (COUPONS[code]) { setApplied({ code, pct: COUPONS[code] }); setCouponErr(false); }
+    if (coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(false); }
     else { setApplied(null); setCouponErr(true); }
   }
 
@@ -694,15 +707,28 @@ export function Newsletter() {
 
 /* ── Offer banner with countdown ── */
 export function OfferBanner() {
-  const [t, setT] = useState({ h: 5, m: 59, s: 59 });
+  const [t, setT] = useState({ h: 0, m: 0, s: 0 });
   useEffect(() => {
-    const iv = setInterval(() => {
-      setT((p) => {
-        let { h, m, s } = p;
-        s--; if (s < 0) { s = 59; m--; } if (m < 0) { m = 59; h--; } if (h < 0) { h = 5; m = 59; s = 59; }
-        return { h, m, s };
-      });
-    }, 1000);
+    const SIX_H = 6 * 60 * 60 * 1000;
+    let end = Number(localStorage.getItem("vyra_flash_end"));
+    if (!end || end < Date.now()) {
+      end = Date.now() + SIX_H;
+      localStorage.setItem("vyra_flash_end", String(end));
+    }
+    const tick = () => {
+      let diff = Math.max(0, end - Date.now());
+      if (diff === 0) { // reinicia un nuevo ciclo de 6h
+        end = Date.now() + SIX_H;
+        localStorage.setItem("vyra_flash_end", String(end));
+        diff = SIX_H;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setT({ h, m, s });
+    };
+    tick();
+    const iv = setInterval(tick, 1000);
     return () => clearInterval(iv);
   }, []);
   const pad = (n: number) => String(n).padStart(2, "0");
