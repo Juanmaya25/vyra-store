@@ -243,7 +243,7 @@ function SpinWheel() {
         className="fixed left-4 bottom-24 sm:bottom-28 z-40 group flex items-center gap-3">
         <span className="relative flex items-center justify-center w-16 h-16 rounded-full bg-[#15B968] shadow-2xl pulse-ring">
           <span className="absolute inset-0 rounded-full bg-[#15B968] animate-ping opacity-30" />
-          <span className="text-3xl spin-slow">🎡</span>
+          <span className="text-3xl wheel-hover">🎡</span>
           <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#E0457E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">1</span>
         </span>
         <span className="glass rounded-full px-4 py-2 text-sm font-bold shadow-lg whitespace-nowrap hidden sm:block group-hover:scale-105 transition-transform">
