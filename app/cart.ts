@@ -73,3 +73,21 @@ export function useWishlist() {
   const has = (id: string) => ids.includes(id);
   return { ids, toggle, has, count: ids.length };
 }
+
+/* ── Recently viewed ── */
+export function pushRecent(id: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const cur: string[] = JSON.parse(localStorage.getItem("vyra_recent") || "[]");
+    const next = [id, ...cur.filter((x) => x !== id)].slice(0, 6);
+    localStorage.setItem("vyra_recent", JSON.stringify(next));
+  } catch { /* ignore */ }
+}
+
+export function useRecent() {
+  const [ids, setIds] = useState<string[]>([]);
+  useEffect(() => {
+    try { setIds(JSON.parse(localStorage.getItem("vyra_recent") || "[]")); } catch { setIds([]); }
+  }, []);
+  return ids;
+}

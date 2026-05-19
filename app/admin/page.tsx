@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import {
   TrendingUp, ShoppingBag, Users, DollarSign, Package,
-  ArrowUpRight, ArrowDownRight, Lock, Eye, EyeOff, Globe, LayoutDashboard
+  ArrowUpRight, ArrowDownRight, Lock, Eye, EyeOff, Globe, LayoutDashboard, Calculator
 } from "lucide-react";
 
 /* ── Demo data ── */
@@ -144,11 +144,19 @@ function Dashboard() {
     }
   }
 
+  const nuevos = (realOrders ?? []).filter((o) => o.estado === "Procesando").length;
+
   return (
     <div className="relative min-h-screen">
       <div className="aurora" /><div className="grain" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-10">
+        {nuevos > 0 && (
+          <div className="glass rounded-2xl px-5 py-3 mb-6 flex items-center gap-3 border-l-4 border-[#15B968]">
+            <span className="w-7 h-7 rounded-full bg-[#15B968] text-[#06120B] text-xs font-bold flex items-center justify-center">{nuevos}</span>
+            <p className="text-sm font-medium">Tienes <strong>{nuevos}</strong> pedido(s) nuevo(s) por procesar 🔔</p>
+          </div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
@@ -277,6 +285,8 @@ function Dashboard() {
           </div>
         </div>
 
+        <PricingEngine />
+
         {/* Orders */}
         <div className="glass rounded-3xl p-6">
           <p className="font-display font-bold mb-5 flex items-center gap-2">
@@ -320,6 +330,52 @@ function Dashboard() {
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PricingEngine() {
+  const [cost, setCost] = useState(20);
+  const [margin, setMargin] = useState(150);
+  const [comp, setComp] = useState(55);
+  const suggested = +(cost * (1 + margin / 100)).toFixed(2);
+  const profit = +(suggested - cost).toFixed(2);
+  const competitive = suggested <= comp;
+  return (
+    <div className="glass rounded-3xl p-6 mb-6">
+      <p className="font-display font-bold mb-1 flex items-center gap-2">
+        <Calculator size={16} className="text-[#15B968]" /> Motor de precios inteligente
+      </p>
+      <p className="text-[#14201A]/40 text-xs font-mono mb-5">Calcula tu precio óptimo según costo, margen y competencia (USD)</p>
+      <div className="grid sm:grid-cols-3 gap-4 mb-5">
+        {[
+          { label: "Costo proveedor", val: cost, set: setCost },
+          { label: "Margen deseado %", val: margin, set: setMargin },
+          { label: "Precio competencia", val: comp, set: setComp },
+        ].map((f) => (
+          <div key={f.label}>
+            <label className="block text-xs font-mono uppercase tracking-wider text-[#14201A]/40 mb-1.5">{f.label}</label>
+            <input type="number" value={f.val} onChange={(e) => f.set(Number(e.target.value))}
+              className="w-full glass rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#15B968]" />
+          </div>
+        ))}
+      </div>
+      <div className="grid sm:grid-cols-3 gap-4">
+        <div className="glass rounded-2xl p-4">
+          <p className="text-[#14201A]/45 text-xs">Precio sugerido</p>
+          <p className="font-display font-black text-2xl text-[#15B968]">${suggested}</p>
+        </div>
+        <div className="glass rounded-2xl p-4">
+          <p className="text-[#14201A]/45 text-xs">Ganancia por venta</p>
+          <p className="font-display font-black text-2xl">${profit}</p>
+        </div>
+        <div className={`rounded-2xl p-4 ${competitive ? "bg-[#15B968]/10" : "bg-[#E0457E]/10"}`}>
+          <p className="text-[#14201A]/45 text-xs">Competitividad</p>
+          <p className={`font-display font-black text-lg ${competitive ? "text-[#15B968]" : "text-[#E0457E]"}`}>
+            {competitive ? "✓ Competitivo" : "✗ Estás caro"}
+          </p>
         </div>
       </div>
     </div>

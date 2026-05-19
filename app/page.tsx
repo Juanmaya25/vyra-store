@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Search, ArrowRight, Truck, ShieldCheck, RefreshCw, Zap, Plus, Heart } from "lucide-react";
 import { PRODUCTS, CATEGORIES, fmt } from "./products";
-import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, Faq, Newsletter, SocialProof } from "./ui";
+import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, Faq, Newsletter, SocialProof, OfferBanner, BackToTop, RecentlyViewed } from "./ui";
 import { useWishlist } from "./cart";
 
 function useReveal() {
@@ -42,6 +42,7 @@ export default function Page() {
     <div className="relative min-h-screen">
       <div className="aurora" /><div className="grain" />
       <Nav />
+      <OfferBanner />
 
       {/* Hero */}
       <header className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-28">
@@ -187,11 +188,13 @@ export default function Page() {
         </div>
       </section>
 
+      <RecentlyViewed />
       <Newsletter />
       <Faq />
       <Footer />
       <WhatsAppFloat />
       <SocialProof />
+      <BackToTop />
     </div>
   );
 }

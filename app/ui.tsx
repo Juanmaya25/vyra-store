@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check, LogOut, Package } from "lucide-react";
-import { useCart } from "./cart";
+import { Star, ShoppingBag, X, Plus, Minus, ChevronRight, MessageCircle, Globe, Check, LogOut, Package, Heart, ArrowUp } from "lucide-react";
+import { useCart, useWishlist, useRecent } from "./cart";
+import { PRODUCTS } from "./products";
 import { useAuth } from "./auth";
 import { fmt, CURRENCIES, type CurrencyCode } from "./products";
 
@@ -119,6 +120,7 @@ function Account() {
 
 export function Nav({ base = "" }: { base?: string }) {
   const { count } = useCart();
+  const { count: wishCount } = useWishlist();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -147,6 +149,12 @@ export function Nav({ base = "" }: { base?: string }) {
             <div className="flex items-center gap-3">
               <Account />
               <CurrencyPicker />
+              <a href="/vyra-store/favoritos/" aria-label="Favoritos" className="relative p-2 rounded-full hover:bg-black/5 transition-colors">
+                <Heart size={20} />
+                {wishCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#E0457E] text-white text-[10px] font-bold flex items-center justify-center">{wishCount}</span>
+                )}
+              </a>
               <button onClick={() => setOpen(true)} className="relative p-2 rounded-full hover:bg-black/5 transition-colors">
                 <ShoppingBag size={20} />
                 {count > 0 && (
@@ -171,6 +179,19 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const [promo, setPromo] = useState(true);
   const [sending, setSending] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
+  const [coupon, setCoupon] = useState("");
+  const [applied, setApplied] = useState<{ code: string; pct: number } | null>(null);
+  const [couponErr, setCouponErr] = useState(false);
+
+  const COUPONS: Record<string, number> = { BIENVENIDA10: 10, VYRA15: 15, DROP20: 20 };
+  const discount = applied ? total * (applied.pct / 100) : 0;
+  const finalTotal = total - discount;
+
+  function applyCoupon() {
+    const code = coupon.trim().toUpperCase();
+    if (COUPONS[code]) { setApplied({ code, pct: COUPONS[code] }); setCouponErr(false); }
+    else { setApplied(null); setCouponErr(true); }
+  }
 
   useEffect(() => {
     if (user) setForm((f) => ({ ...f, cliente: f.cliente || user.name, email: f.email || user.email }));
@@ -186,7 +207,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         email: form.email,
         pais: form.pais,
         items: lines.map((l) => ({ name: l.name, qty: l.qty, variant: l.variant, priceUSD: l.priceUSD })),
-        total_usd: total,
+        total_usd: finalTotal,
         estado: "Procesando",
       }).select("id").single();
       if (error) throw error;
@@ -259,8 +280,8 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                   </span>
                 </label>
                 <div className="glass rounded-xl p-4 flex justify-between text-sm">
-                  <span className="text-[#14201A]/55">Total a pagar</span>
-                  <span className="font-display font-bold">{fmt(total, cur)}</span>
+                  <span className="text-[#14201A]/55">Total a pagar {applied && <span className="text-[#15B968] text-xs">({applied.code})</span>}</span>
+                  <span className="font-display font-bold">{fmt(finalTotal, cur)}</span>
                 </div>
                 <button type="submit" disabled={sending} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-60">
                   {sending ? "Registrando..." : <>Confirmar pedido <ChevronRight size={18} /></>}
@@ -298,9 +319,22 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             )}
             {step === "cart" && lines.length > 0 && (
               <div className="p-6 border-t border-[var(--line)]">
+                <div className="flex gap-2 mb-4">
+                  <input value={coupon} onChange={(e) => { setCoupon(e.target.value); setCouponErr(false); }}
+                    placeholder="Código de descuento"
+                    className="flex-1 glass rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#15B968] uppercase" />
+                  <button onClick={applyCoupon} className="btn-ghost px-4 py-2.5 rounded-xl text-sm">Aplicar</button>
+                </div>
+                {couponErr && <p className="text-[#E0457E] text-xs mb-3 font-mono">Cupón inválido. Prueba: BIENVENIDA10</p>}
+                {applied && (
+                  <div className="flex justify-between text-sm mb-2 text-[#15B968]">
+                    <span>Cupón {applied.code} (−{applied.pct}%)</span>
+                    <span className="font-mono">−{fmt(discount, cur)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between mb-4">
                   <span className="text-[#14201A]/55">Total</span>
-                  <span className="font-display font-black text-2xl">{fmt(total, cur)}</span>
+                  <span className="font-display font-black text-2xl">{fmt(finalTotal, cur)}</span>
                 </div>
                 <button onClick={() => setStep("checkout")} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2">
                   Finalizar compra <ChevronRight size={18} />
@@ -447,6 +481,81 @@ export function Newsletter() {
             <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 10%</button>
           </form>
         )}
+      </div>
+    </section>
+  );
+}
+
+/* ── Offer banner with countdown ── */
+export function OfferBanner() {
+  const [t, setT] = useState({ h: 5, m: 59, s: 59 });
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setT((p) => {
+        let { h, m, s } = p;
+        s--; if (s < 0) { s = 59; m--; } if (m < 0) { m = 59; h--; } if (h < 0) { h = 5; m = 59; s = 59; }
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div className="relative z-10 max-w-7xl mx-auto px-6 pt-6">
+      <div className="glass rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-l-4 border-[#15B968]">
+        <p className="font-display font-bold text-sm sm:text-base">
+          🔥 OFERTA FLASH · usa <span className="text-[#15B968] font-mono">BIENVENIDA10</span> y ahorra 10%
+        </p>
+        <div className="flex items-center gap-2 font-mono text-sm">
+          <span className="text-[#14201A]/45">Termina en</span>
+          {[t.h, t.m, t.s].map((n, i) => (
+            <span key={i} className="bg-[#15B968] text-[#06120B] font-bold rounded-lg px-2 py-1">{pad(n)}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Back to top ── */
+export function BackToTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const fn = () => setShow(window.scrollY > 600);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+  if (!show) return null;
+  return (
+    <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label="Volver arriba"
+      className="fixed bottom-24 right-6 z-40 w-11 h-11 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+      <ArrowUp size={18} className="text-[#15B968]" />
+    </button>
+  );
+}
+
+/* ── Recently viewed ── */
+export function RecentlyViewed({ exclude, base = "" }: { exclude?: string; base?: string }) {
+  const ids = useRecent();
+  const items = PRODUCTS.filter((p) => ids.includes(p.id) && p.id !== exclude).slice(0, 4);
+  const [cur] = useCurrency();
+  if (items.length === 0) return null;
+  return (
+    <section className="relative z-10 max-w-7xl mx-auto px-6 pb-20">
+      <h2 className="font-display font-black text-2xl mb-5">Vistos recientemente</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {items.map((p) => (
+          <a key={p.id} href={`${base}producto/${p.id}/`} className="pcard glass rounded-2xl overflow-hidden group">
+            <div className="overflow-hidden">
+              <img src={p.images[0]} alt={p.name} className="pcard-img w-full h-40 object-cover" />
+            </div>
+            <div className="p-4">
+              <h3 className="font-display font-bold text-sm leading-tight">{p.name}</h3>
+              <p className="font-mono text-[#15B968] text-sm mt-1.5">{fmt(p.priceUSD, cur)}</p>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
   );

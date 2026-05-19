@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw, Heart, Flame, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShoppingBag, Check, Truck, ShieldCheck, RefreshCw, Heart, Flame, Eye, Star } from "lucide-react";
 import type { Product } from "../../products";
 import { fmt } from "../../products";
-import { useCart, useWishlist } from "../../cart";
-import { Nav, Footer, Stars, WhatsAppFloat, useCurrency } from "../../ui";
+import { useCart, useWishlist, pushRecent } from "../../cart";
+import { Nav, Footer, Stars, WhatsAppFloat, useCurrency, RecentlyViewed, BackToTop } from "../../ui";
+import { listReviews, addReview, type ReviewRow } from "../../reviews";
 
 export default function ProductView({ product, related }: { product: Product; related: Product[] }) {
   const { add } = useCart();
@@ -16,6 +17,28 @@ export default function ProductView({ product, related }: { product: Product; re
   const [img, setImg] = useState(0);
   const [variant, setVariant] = useState(product.colors?.[0]?.name ?? product.sizes?.[0] ?? "Único");
   const [added, setAdded] = useState(false);
+
+  const [custReviews, setCustReviews] = useState<ReviewRow[]>([]);
+  const [rForm, setRForm] = useState({ author: "", rating: 5, text: "" });
+  const [rSent, setRSent] = useState(false);
+
+  useEffect(() => {
+    pushRecent(product.id);
+    listReviews(product.id).then(setCustReviews);
+  }, [product.id]);
+
+  async function submitReview(e: React.FormEvent) {
+    e.preventDefault();
+    const ok = await addReview({ product_id: product.id, author: rForm.author, rating: rForm.rating, text: rForm.text });
+    if (ok) {
+      setCustReviews([{ ...rForm, product_id: product.id, created_at: new Date().toISOString() }, ...custReviews]);
+      setRForm({ author: "", rating: 5, text: "" });
+      setRSent(true);
+      setTimeout(() => setRSent(false), 2500);
+    } else {
+      alert("No se pudo enviar la reseña. Ejecuta SUPABASE_REVIEWS.sql en Supabase.");
+    }
+  }
 
   function handleAdd() {
     add(product, variant);
@@ -148,6 +171,49 @@ export default function ProductView({ product, related }: { product: Product; re
               </div>
             ))}
           </div>
+
+          {/* Customer reviews */}
+          <div className="mt-12 grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <h3 className="font-display font-bold text-xl mb-4">Opiniones de clientes VYRA</h3>
+              {custReviews.length === 0 && <p className="text-[#14201A]/45 text-sm">Sé el primero en opinar sobre este producto.</p>}
+              <div className="space-y-3">
+                {custReviews.map((r, i) => (
+                  <div key={i} className="glass rounded-2xl p-5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-sm">{r.author}</span>
+                      <span className="text-[#14201A]/35 text-xs font-mono">
+                        {r.created_at ? new Date(r.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "short" }) : ""}
+                      </span>
+                    </div>
+                    <Stars value={r.rating} size={12} />
+                    <p className="text-[#14201A]/60 text-sm mt-2 leading-relaxed">{r.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <form onSubmit={submitReview} className="glass rounded-2xl p-5 h-fit">
+              <h4 className="font-display font-bold mb-3">Deja tu reseña</h4>
+              {rSent ? (
+                <p className="text-[#15B968] text-sm flex items-center gap-2"><Check size={16} /> ¡Gracias por tu opinión!</p>
+              ) : (
+                <div className="space-y-3">
+                  <input required value={rForm.author} onChange={(e) => setRForm({ ...rForm, author: e.target.value })}
+                    placeholder="Tu nombre" className="w-full glass rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#15B968]" />
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button type="button" key={n} onClick={() => setRForm({ ...rForm, rating: n })} aria-label={`${n} estrellas`}>
+                        <Star size={22} className={n <= rForm.rating ? "fill-[#15B968] text-[#15B968]" : "text-[#14201A]/20"} />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea required rows={3} value={rForm.text} onChange={(e) => setRForm({ ...rForm, text: e.target.value })}
+                    placeholder="¿Qué te pareció el producto?" className="w-full glass rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#15B968] resize-none" />
+                  <button className="btn-lime w-full py-3 rounded-xl text-sm">Publicar reseña</button>
+                </div>
+              )}
+            </form>
+          </div>
         </section>
 
         {/* Related */}
@@ -175,8 +241,10 @@ export default function ProductView({ product, related }: { product: Product; re
         )}
       </main>
 
+      <RecentlyViewed exclude={product.id} base="../../" />
       <Footer base="../../" />
       <WhatsAppFloat />
+      <BackToTop />
     </div>
   );
 }
