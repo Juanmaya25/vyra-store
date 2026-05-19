@@ -128,7 +128,7 @@ export function Nav({ base = "" }: { base?: string }) {
         <div className="flex whitespace-nowrap marquee">
           {Array(2).fill(0).map((_, k) => (
             <div key={k} className="flex shrink-0">
-              {["Envío gratis desde $50", "Garantía VYRA 30 días", "Colombia + USA", "Pago contra entrega", "Productos curados 2026"].map((t) => (
+              {["Envío gratis desde $120", "Garantía VYRA 30 días", "Colombia + USA", "Pago contra entrega", "Productos curados 2026"].map((t) => (
                 <span key={t} className="flex items-center px-6">{t}<span className="ml-6 w-1.5 h-1.5 rounded-full bg-[#06120B]" /></span>
               ))}
             </div>
@@ -174,11 +174,11 @@ export function Nav({ base = "" }: { base?: string }) {
 
 function SpinWheel() {
   const PRIZES = [
-    { label: "10% OFF", code: "BIENVENIDA10" },
+    { label: "5% OFF", code: "BIENVENIDA5" },
     { label: "Sigue participando", code: "" },
-    { label: "15% OFF", code: "VYRA15" },
-    { label: "Envío gratis", code: "DROP20" },
-    { label: "20% OFF", code: "DROP20" },
+    { label: "8% OFF", code: "VYRA8" },
+    { label: "Envío gratis", code: "DROP10" },
+    { label: "10% OFF", code: "DROP10" },
     { label: "Casi...", code: "" },
   ];
   const [open, setOpen] = useState(false);
@@ -248,7 +248,7 @@ function SpinWheel() {
         ) : (
           <div>
             <p className="font-display font-bold text-lg">¡Casi! 😅</p>
-            <p className="text-[#14201A]/55 text-sm mt-1">Esta vez no, pero igual tienes <span className="text-[#15B968] font-mono font-bold">BIENVENIDA10</span></p>
+            <p className="text-[#14201A]/55 text-sm mt-1">Esta vez no, pero igual tienes <span className="text-[#15B968] font-mono font-bold">BIENVENIDA5</span></p>
           </div>
         )}
       </div>
@@ -290,7 +290,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const [applied, setApplied] = useState<{ code: string; pct: number } | null>(null);
   const [couponErr, setCouponErr] = useState(false);
 
-  const COUPONS: Record<string, number> = { BIENVENIDA10: 10, VYRA15: 15, DROP20: 20 };
+  const COUPONS: Record<string, number> = { BIENVENIDA5: 5, VYRA8: 8, DROP10: 10 };
   const discount = applied ? total * (applied.pct / 100) : 0;
   const finalTotal = total - discount;
 
@@ -407,15 +407,15 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
               )}
               {lines.length > 0 && (
                 <div className="glass rounded-2xl p-4">
-                  {total >= 50 ? (
+                  {total >= 120 ? (
                     <p className="text-sm text-[#15B968] font-medium flex items-center gap-2">🎉 ¡Tienes envío GRATIS!</p>
                   ) : (
                     <p className="text-sm text-[#14201A]/65">
-                      Te faltan <span className="text-[#15B968] font-bold font-mono">{fmt(50 - total, cur)}</span> para <strong>envío gratis</strong>
+                      Te faltan <span className="text-[#15B968] font-bold font-mono">{fmt(120 - total, cur)}</span> para <strong>envío gratis</strong>
                     </p>
                   )}
                   <div className="h-2 rounded-full bg-black/10 mt-2 overflow-hidden">
-                    <div className="h-full bg-[#15B968] transition-all" style={{ width: `${Math.min(100, (total / 50) * 100)}%` }} />
+                    <div className="h-full bg-[#15B968] transition-all" style={{ width: `${Math.min(100, (total / 120) * 100)}%` }} />
                   </div>
                 </div>
               )}
@@ -446,7 +446,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                     className="flex-1 glass rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#15B968] uppercase" />
                   <button onClick={applyCoupon} className="btn-ghost px-4 py-2.5 rounded-xl text-sm">Aplicar</button>
                 </div>
-                {couponErr && <p className="text-[#E0457E] text-xs mb-3 font-mono">Cupón inválido. Prueba: BIENVENIDA10</p>}
+                {couponErr && <p className="text-[#E0457E] text-xs mb-3 font-mono">Cupón inválido. Prueba: BIENVENIDA5</p>}
                 {applied && (
                   <div className="flex justify-between text-sm mb-2 text-[#15B968]">
                     <span>Cupón {applied.code} (−{applied.pct}%)</span>
@@ -594,7 +594,7 @@ export function Newsletter() {
     <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
       <div className="glass rounded-3xl p-10 sm:p-14 text-center glow-lime">
         <h2 className="font-display font-black text-3xl sm:text-4xl mb-3">Sé el primero en el próximo drop</h2>
-        <p className="text-[#14201A]/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#15B968] font-bold">10% de descuento</span> en tu primera compra + acceso anticipado.</p>
+        <p className="text-[#14201A]/55 mb-7 max-w-md mx-auto">Suscríbete y recibe <span className="text-[#15B968] font-bold">5% de descuento</span> en tu primera compra + acceso anticipado.</p>
         {done ? (
           <p className="text-[#15B968] font-display font-bold flex items-center justify-center gap-2"><Check size={20} /> ¡Listo! Revisa tu correo.</p>
         ) : (
@@ -628,7 +628,7 @@ export function OfferBanner() {
     <div className="relative z-10 max-w-7xl mx-auto px-6 pt-6">
       <div className="glass rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-l-4 border-[#15B968]">
         <p className="font-display font-bold text-sm sm:text-base">
-          🔥 OFERTA FLASH · usa <span className="text-[#15B968] font-mono">BIENVENIDA10</span> y ahorra 10%
+          🔥 OFERTA FLASH · usa <span className="text-[#15B968] font-mono">BIENVENIDA5</span> y ahorra 5%
         </p>
         <div className="flex items-center gap-2 font-mono text-sm">
           <span className="text-[#14201A]/45">Termina en</span>
