@@ -172,20 +172,31 @@ export function Nav({ base = "" }: { base?: string }) {
   );
 }
 
+const SPIN_PRIZES = [
+  { label: "5% OFF", code: "BIENVENIDA5", color: "#15B968" },
+  { label: "Sigue", code: "", color: "#0B3D2A" },
+  { label: "8% OFF", code: "VYRA8", color: "#0FA88A" },
+  { label: "Envío gratis", code: "DROP10", color: "#0B3D2A" },
+  { label: "10% OFF", code: "DROP10", color: "#15B968" },
+  { label: "Casi...", code: "", color: "#0FA88A" },
+];
+const SEG = 360 / SPIN_PRIZES.length;
+
+function slicePath(i: number) {
+  const a0 = ((i * SEG - 90) * Math.PI) / 180;
+  const a1 = (((i + 1) * SEG - 90) * Math.PI) / 180;
+  const x0 = 100 + 100 * Math.cos(a0), y0 = 100 + 100 * Math.sin(a0);
+  const x1 = 100 + 100 * Math.cos(a1), y1 = 100 + 100 * Math.sin(a1);
+  return `M100,100 L${x0},${y0} A100,100 0 0,1 ${x1},${y1} Z`;
+}
+
 function SpinWheel() {
-  const PRIZES = [
-    { label: "5% OFF", code: "BIENVENIDA5" },
-    { label: "Sigue participando", code: "" },
-    { label: "8% OFF", code: "VYRA8" },
-    { label: "Envío gratis", code: "DROP10" },
-    { label: "10% OFF", code: "DROP10" },
-    { label: "Casi...", code: "" },
-  ];
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [rot, setRot] = useState(0);
   const [result, setResult] = useState<{ label: string; code: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [pieces, setPieces] = useState<{ left: string; bg: string; delay: string; dur: string; w: string; h: string }[]>([]);
 
   useEffect(() => {
     if (localStorage.getItem("vyra_spin")) return;
@@ -193,62 +204,112 @@ function SpinWheel() {
     return () => clearTimeout(t);
   }, []);
 
+  function close() { setOpen(false); localStorage.setItem("vyra_spin", "1"); }
+
   function spin() {
-    if (spinning) return;
+    if (spinning || result) return;
     setSpinning(true);
-    setResult(null);
-    const idx = Math.floor(Math.random() * PRIZES.length);
-    const turns = 6;
-    const target = turns * 360 + (360 - idx * (360 / PRIZES.length)) - 30;
+    const idx = Math.floor(Math.random() * SPIN_PRIZES.length);
+    const target = 360 * 7 + (360 - idx * SEG - SEG / 2);
     setRot(target);
     setTimeout(() => {
       setSpinning(false);
-      setResult(PRIZES[idx]);
+      setResult(SPIN_PRIZES[idx]);
       localStorage.setItem("vyra_spin", "1");
-    }, 4200);
+      if (SPIN_PRIZES[idx].code) {
+        const cols = ["#15B968", "#0FA88A", "#E0457E", "#FFB84D", "#14201A"];
+        setPieces(Array.from({ length: 60 }).map((_, i) => ({
+          left: `${Math.random() * 100}%`,
+          bg: cols[i % 5],
+          delay: `${Math.random() * 0.6}s`,
+          dur: `${2.4 + Math.random() * 1.6}s`,
+          w: `${6 + Math.random() * 6}px`,
+          h: `${10 + Math.random() * 8}px`,
+        })));
+        setTimeout(() => setPieces([]), 4000);
+      }
+    }, 5200);
   }
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setOpen(false); localStorage.setItem("vyra_spin", "1"); }} />
-      <div className="relative glass rounded-3xl p-8 max-w-sm w-full text-center">
-        <button onClick={() => { setOpen(false); localStorage.setItem("vyra_spin", "1"); }}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full glass flex items-center justify-center"><X size={16} /></button>
-        <p className="font-display font-black text-2xl mb-1">🎡 Gira y gana</p>
-        <p className="text-[#14201A]/50 text-sm mb-6">Tienes 1 giro gratis. ¡Suerte!</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={close} />
 
-        <div className="relative w-56 h-56 mx-auto mb-6">
-          <div className="absolute left-1/2 -top-2 -translate-x-1/2 z-10 text-[#15B968] text-2xl">▼</div>
-          <div className="w-full h-full rounded-full border-4 border-[#15B968] overflow-hidden"
-            style={{
-              transform: `rotate(${rot}deg)`,
-              transition: spinning ? "transform 4s cubic-bezier(0.16,1,0.3,1)" : "none",
-              background: `conic-gradient(#15B968 0deg 60deg, #0FA88A 60deg 120deg, #15B968 120deg 180deg, #0FA88A 180deg 240deg, #15B968 240deg 300deg, #0FA88A 300deg 360deg)`,
-            }}>
+      {pieces.length > 0 && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {pieces.map((p, i) => (
+            <span key={i} className="confetti-piece"
+              style={{ left: p.left, background: p.bg, animationDelay: p.delay, animationDuration: p.dur, width: p.w, height: p.h }} />
+          ))}
+        </div>
+      )}
+
+      <div className="relative glass rounded-[2rem] p-8 sm:p-10 max-w-md w-full text-center">
+        <button onClick={close} className="absolute top-5 right-5 w-9 h-9 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform"><X size={17} /></button>
+
+        <div className="inline-flex items-center gap-2 bg-[#15B968]/12 text-[#15B968] rounded-full px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-widest mb-3">
+          🎁 Solo hoy
+        </div>
+        <h2 className="font-display font-black text-3xl leading-tight">Gira y <span className="grad">gana</span></h2>
+        <p className="text-[#14201A]/50 text-sm mt-2 mb-7">Tienes <strong>1 giro gratis</strong>. ¡La suerte está echada!</p>
+
+        <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto mb-8">
+          {/* Pointer */}
+          <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-20"
+            style={{ filter: "drop-shadow(0 3px 4px rgba(0,0,0,0.3))" }}>
+            <div style={{ width: 0, height: 0, borderLeft: "14px solid transparent", borderRight: "14px solid transparent", borderTop: "26px solid #14201A" }} />
           </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-white border-2 border-[#15B968] flex items-center justify-center font-display font-black text-[#15B968]">VY</div>
+
+          <div className="absolute inset-0 rounded-full"
+            style={{ boxShadow: "0 0 0 10px #fff, 0 0 0 14px #15B968, 0 24px 60px -12px rgba(21,185,104,0.55)" }}>
+            <svg viewBox="0 0 200 200" className="w-full h-full"
+              style={{ transform: `rotate(${rot}deg)`, transition: spinning ? "transform 5s cubic-bezier(0.12,0.7,0.12,1)" : "none" }}>
+              {SPIN_PRIZES.map((p, i) => {
+                const mid = ((i * SEG + SEG / 2 - 90) * Math.PI) / 180;
+                const tx = 100 + 60 * Math.cos(mid), ty = 100 + 60 * Math.sin(mid);
+                return (
+                  <g key={i}>
+                    <path d={slicePath(i)} fill={p.color} stroke="#ffffff" strokeWidth="1.5" />
+                    <text x={tx} y={ty} fill="#ffffff" fontSize="9.5" fontWeight="800"
+                      textAnchor="middle" dominantBaseline="middle"
+                      transform={`rotate(${i * SEG + SEG / 2}, ${tx}, ${ty})`}>
+                      {p.label}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+
+          {/* Hub */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg border-4 border-[#15B968]">
+              <span className="font-display font-black text-[#15B968] text-lg">VY</span>
+            </div>
           </div>
         </div>
 
         {!result ? (
-          <button onClick={spin} disabled={spinning} className="btn-lime w-full py-3.5 rounded-full disabled:opacity-60">
-            {spinning ? "Girando..." : "¡GIRAR!"}
+          <button onClick={spin} disabled={spinning}
+            className="btn-lime w-full py-4 rounded-full text-lg disabled:opacity-60 pulse-ring">
+            {spinning ? "Girando..." : "🎰 ¡GIRAR AHORA!"}
           </button>
         ) : result.code ? (
-          <div>
-            <p className="font-display font-bold text-lg text-[#15B968]">🎁 ¡Ganaste {result.label}!</p>
-            <p className="text-[#14201A]/55 text-sm mt-1 mb-3">Usa este código en el carrito:</p>
+          <div className="space-y-3">
+            <p className="font-display font-black text-2xl text-[#15B968]">🎉 ¡Ganaste {result.label}!</p>
+            <p className="text-[#14201A]/55 text-sm">Copia tu código y úsalo en el carrito:</p>
             <button onClick={() => { navigator.clipboard?.writeText(result.code); setCopied(true); }}
-              className="w-full glass rounded-xl py-3 font-mono font-bold text-[#15B968] border-2 border-dashed border-[#15B968]">
-              {result.code} {copied ? "✓ copiado" : "· copiar"}
+              className="w-full glass rounded-xl py-4 font-mono font-bold text-[#15B968] border-2 border-dashed border-[#15B968] text-lg hover:bg-[#15B968]/5 transition-colors">
+              {result.code} {copied ? "✓ copiado" : "· toca para copiar"}
             </button>
+            <button onClick={close} className="text-[#14201A]/45 text-sm hover:text-[#14201A]">Seguir comprando →</button>
           </div>
         ) : (
-          <div>
-            <p className="font-display font-bold text-lg">¡Casi! 😅</p>
-            <p className="text-[#14201A]/55 text-sm mt-1">Esta vez no, pero igual tienes <span className="text-[#15B968] font-mono font-bold">BIENVENIDA5</span></p>
+          <div className="space-y-2">
+            <p className="font-display font-black text-xl">¡Casi! 😅</p>
+            <p className="text-[#14201A]/55 text-sm">Esta vez no ganaste, pero igual te regalamos <span className="text-[#15B968] font-mono font-bold">BIENVENIDA5</span></p>
+            <button onClick={close} className="btn-ghost px-6 py-2.5 rounded-full text-sm mt-2">Entendido</button>
           </div>
         )}
       </div>
@@ -316,6 +377,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         items: lines.map((l) => ({ name: l.name, qty: l.qty, variant: l.variant, priceUSD: l.priceUSD })),
         total_usd: finalTotal,
         estado: "Procesando",
+        coupon: applied?.code ?? null,
       }).select("id").single();
       if (error) throw error;
       if (promo) await addSubscriber(form.email, "checkout", form.cliente);

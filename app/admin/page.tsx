@@ -101,8 +101,8 @@ export default function Admin() {
   return <Dashboard />;
 }
 
-type AdminOrder = { id: number; created_at?: string; cliente: string; email?: string; pais: string; items?: unknown; total_usd: number; estado: string };
-type AdminRow = { rawId?: number; id: string; cliente: string; pais: string; total: string; estado: string };
+type AdminOrder = { id: number; created_at?: string; cliente: string; email?: string; pais: string; items?: unknown; total_usd: number; estado: string; coupon?: string | null };
+type AdminRow = { rawId?: number; id: string; cliente: string; pais: string; total: string; estado: string; coupon?: string | null };
 
 function Dashboard() {
   const [realOrders, setRealOrders] = useState<AdminOrder[] | null>(null);
@@ -134,6 +134,7 @@ function Dashboard() {
     pais: o.pais,
     total: `$${Number(o.total_usd).toLocaleString()} USD`,
     estado: o.estado,
+    coupon: o.coupon ?? null,
   }));
   const rows: AdminRow[] = liveRows.length ? liveRows : orders;
 
@@ -306,6 +307,7 @@ function Dashboard() {
                   <th className="text-left pb-3 font-normal">Cliente</th>
                   <th className="text-left pb-3 font-normal">País</th>
                   <th className="text-left pb-3 font-normal">Total</th>
+                  <th className="text-left pb-3 font-normal">Cupón</th>
                   <th className="text-left pb-3 font-normal">Estado</th>
                 </tr>
               </thead>
@@ -316,6 +318,11 @@ function Dashboard() {
                     <td className="py-3.5">{o.cliente}</td>
                     <td className="py-3.5 text-[#14201A]/60">{o.pais}</td>
                     <td className="py-3.5 font-mono">{o.total}</td>
+                    <td className="py-3.5">
+                      {o.coupon
+                        ? <span className="text-[10px] font-mono font-bold bg-[#15B968]/15 text-[#15B968] px-2 py-1 rounded-full">🎟️ {o.coupon}</span>
+                        : <span className="text-[#14201A]/30 text-xs">—</span>}
+                    </td>
                     <td className="py-3.5">
                       {o.rawId ? (
                         <select value={o.estado} onChange={(e) => setStatus(o.rawId as number, e.target.value)}
