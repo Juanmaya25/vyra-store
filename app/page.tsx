@@ -98,7 +98,7 @@ export default function Page() {
       <section id="catalogo" className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
         <div className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-2">// El drop</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-2">{"// El drop"}</p>
             <h2 className="font-display font-black text-4xl">Productos curados</h2>
           </div>
           <div className="flex items-center gap-3">

@@ -24,7 +24,7 @@ export function useAuth() {
       }
     })();
 
-    function applySession(session: any) {
+    function applySession(session: { user?: { email?: string; user_metadata?: Record<string, string> } } | null) {
       if (session?.user) {
         const m = session.user.user_metadata ?? {};
         setUser({

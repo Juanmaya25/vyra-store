@@ -167,7 +167,7 @@ export default function ProductView({ product, related }: { product: Product; re
             </button>
 
             <div className="grid grid-cols-3 gap-3 mt-6">
-              {[[Truck, "Envío 48h"], [ShieldCheck, "Garantía 30d"], [RefreshCw, "Contra entrega"]].map(([Ic, t]: any) => (
+              {([[Truck, "Envío 48h"], [ShieldCheck, "Garantía 30d"], [RefreshCw, "Contra entrega"]] as const).map(([Ic, t]) => (
                 <div key={t} className="glass rounded-2xl p-3 text-center">
                   <Ic size={18} className="text-[#15B968] mx-auto mb-1.5" />
                   <p className="text-[11px] text-[#14201A]/55">{t}</p>

@@ -49,7 +49,7 @@ const estadoColor: Record<string, string> = {
   Entregado: "text-[#0FA88A] bg-[#0FA88A]/10",
 };
 
-function Tip({ active, payload, label }: any) {
+function Tip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="glass rounded-xl px-3 py-2 text-xs font-mono">
@@ -101,15 +101,18 @@ export default function Admin() {
   return <Dashboard />;
 }
 
+type AdminOrder = { id: number; created_at?: string; cliente: string; email?: string; pais: string; items?: unknown; total_usd: number; estado: string };
+type AdminRow = { rawId?: number; id: string; cliente: string; pais: string; total: string; estado: string };
+
 function Dashboard() {
-  const [realOrders, setRealOrders] = useState<any[] | null>(null);
+  const [realOrders, setRealOrders] = useState<AdminOrder[] | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
         const { supabase } = await import("../supabase");
         const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50);
-        setRealOrders(data ?? []);
+        setRealOrders((data ?? []) as AdminOrder[]);
       } catch { setRealOrders([]); }
     })();
   }, []);
@@ -132,7 +135,7 @@ function Dashboard() {
     total: `$${Number(o.total_usd).toLocaleString()} USD`,
     estado: o.estado,
   }));
-  const rows: any[] = liveRows.length ? liveRows : orders;
+  const rows: AdminRow[] = liveRows.length ? liveRows : orders;
 
   async function setStatus(rawId: number, estado: string) {
     setRealOrders((prev) => (prev ?? []).map((o) => (o.id === rawId ? { ...o, estado } : o)));
@@ -315,7 +318,7 @@ function Dashboard() {
                     <td className="py-3.5 font-mono">{o.total}</td>
                     <td className="py-3.5">
                       {o.rawId ? (
-                        <select value={o.estado} onChange={(e) => setStatus(o.rawId, e.target.value)}
+                        <select value={o.estado} onChange={(e) => setStatus(o.rawId as number, e.target.value)}
                           className={`px-3 py-1 rounded-full text-xs font-medium outline-none cursor-pointer border-0 ${estadoColor[o.estado] ?? "text-[#15B968] bg-[#15B968]/10"}`}>
                           {["Procesando", "Enviado", "Entregado", "Cancelado"].map((s) => (
                             <option key={s} value={s} className="bg-white text-[#14201A]">{s}</option>

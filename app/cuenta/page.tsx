@@ -5,11 +5,14 @@ import { Package, LogIn } from "lucide-react";
 import { Nav, Footer, WhatsAppFloat, useCurrency } from "../ui";
 import { useAuth } from "../auth";
 import { fmt } from "../products";
+import type { OrderRow } from "../supabase";
+
+type OrderItem = { name: string; qty: number; variant: string; priceUSD: number };
 
 export default function Cuenta() {
   const { user, ready, loginGoogle } = useAuth();
   const [cur] = useCurrency();
-  const [orders, setOrders] = useState<any[] | null>(null);
+  const [orders, setOrders] = useState<OrderRow[] | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -21,7 +24,7 @@ export default function Cuenta() {
           .select("*")
           .eq("email", user.email)
           .order("created_at", { ascending: false });
-        setOrders(data ?? []);
+        setOrders((data ?? []) as OrderRow[]);
       } catch { setOrders([]); }
     })();
   }, [user]);
@@ -77,12 +80,12 @@ export default function Cuenta() {
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div>
                       <span className="font-mono text-[#15B968]">#VY-{o.id}</span>
-                      <span className="text-[#14201A]/40 text-xs ml-3">{new Date(o.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                      <span className="text-[#14201A]/40 text-xs ml-3">{o.created_at ? new Date(o.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" }) : ""}</span>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${estadoColor[o.estado] ?? "text-[#14201A]/60 bg-black/5"}`}>{o.estado}</span>
                   </div>
                   <div className="space-y-1.5">
-                    {(o.items ?? []).map((it: any, i: number) => (
+                    {((o.items ?? []) as OrderItem[]).map((it, i) => (
                       <div key={i} className="flex justify-between text-sm text-[#14201A]/65">
                         <span>{it.qty}× {it.name} <span className="text-[#14201A]/35">· {it.variant}</span></span>
                         <span className="font-mono">{fmt(it.priceUSD * it.qty, cur)}</span>

@@ -13,6 +13,15 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Static export con imágenes remotas no optimizadas: <img> es intencional.
+      "@next/next/no-img-element": "off",
+      // Hidratación desde localStorage y prellenado de formularios desde auth
+      // asíncrono: patrón intencional y correcto para esta app estática.
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

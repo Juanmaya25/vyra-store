@@ -469,7 +469,7 @@ export function Faq() {
   return (
     <section className="relative z-10 max-w-3xl mx-auto px-6 pb-24">
       <div className="text-center mb-10">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-2">// Dudas</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-[#15B968] mb-2">{"// Dudas"}</p>
         <h2 className="font-display font-black text-4xl">Preguntas frecuentes</h2>
       </div>
       <div className="space-y-3">

@@ -27,7 +27,7 @@ export async function addReview(r: ReviewRow): Promise<{ ok: boolean; msg?: stri
     const { error } = await supabase.from("reviews").insert(r);
     if (error) return { ok: false, msg: `${error.code ?? ""} ${error.message ?? ""}`.trim() };
     return { ok: true };
-  } catch (e: any) {
-    return { ok: false, msg: e?.message ?? "error de red" };
+  } catch (e: unknown) {
+    return { ok: false, msg: e instanceof Error ? e.message : "error de red" };
   }
 }

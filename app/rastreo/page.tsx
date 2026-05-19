@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { PackageSearch, Check } from "lucide-react";
 import { Nav, Footer, WhatsAppFloat } from "../ui";
+import type { OrderRow } from "../supabase";
+
+type OrderItem = { name: string; qty: number; variant: string; priceUSD: number };
 
 const STEPS = ["Procesando", "Enviado", "Entregado"];
 
 export default function Rastreo() {
   const [id, setId] = useState("");
-  const [order, setOrder] = useState<any | null>(null);
+  const [order, setOrder] = useState<OrderRow | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "notfound">("idle");
 
   async function track(e: React.FormEvent) {
@@ -20,7 +23,7 @@ export default function Rastreo() {
     try {
       const { supabase } = await import("../supabase");
       const { data } = await supabase.from("orders").select("*").eq("id", Number(num)).single();
-      if (data) { setOrder(data); setState("idle"); }
+      if (data) { setOrder(data as OrderRow); setState("idle"); }
       else setState("notfound");
     } catch { setState("notfound"); }
   }
@@ -59,7 +62,7 @@ export default function Rastreo() {
                 <p className="text-[#14201A]/50 text-sm mt-0.5">{order.cliente} · {order.pais}</p>
               </div>
               <span className="text-[#14201A]/40 text-xs font-mono">
-                {new Date(order.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" })}
+                {order.created_at ? new Date(order.created_at).toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" }) : ""}
               </span>
             </div>
 
@@ -82,7 +85,7 @@ export default function Rastreo() {
             )}
 
             <div className="mt-7 pt-5 border-t border-[var(--line)] space-y-1.5">
-              {(order.items ?? []).map((it: any, i: number) => (
+              {((order.items ?? []) as OrderItem[]).map((it, i) => (
                 <div key={i} className="flex justify-between text-sm text-[#14201A]/65">
                   <span>{it.qty}× {it.name}</span>
                 </div>
