@@ -176,7 +176,7 @@ const SPIN_PRIZES = [
   { label: "5% OFF", percent: 5, color: "#15B968" },
   { label: "Sigue", percent: 0, color: "#0B3D2A" },
   { label: "8% OFF", percent: 8, color: "#0FA88A" },
-  { label: "Envío gratis", percent: 10, color: "#0B3D2A" },
+  { label: "7% OFF", percent: 7, color: "#0B3D2A" },
   { label: "10% OFF", percent: 10, color: "#15B968" },
   { label: "Casi...", percent: 0, color: "#0FA88A" },
 ];
