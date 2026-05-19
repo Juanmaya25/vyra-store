@@ -197,14 +197,18 @@ function SpinWheel() {
   const [result, setResult] = useState<{ label: string; code: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [pieces, setPieces] = useState<{ left: string; bg: string; delay: string; dur: string; w: string; h: string }[]>([]);
+  const [done, setDone] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("vyra_spin")) return;
-    const t = setTimeout(() => setOpen(true), 9000);
-    return () => clearTimeout(t);
+    const spun = !!localStorage.getItem("vyra_spin_v2");
+    setDone(spun);
+    if (!spun && !sessionStorage.getItem("vyra_spin_seen")) {
+      const t = setTimeout(() => { setOpen(true); sessionStorage.setItem("vyra_spin_seen", "1"); }, 8000);
+      return () => clearTimeout(t);
+    }
   }, []);
 
-  function close() { setOpen(false); localStorage.setItem("vyra_spin", "1"); }
+  function close() { setOpen(false); }
 
   function spin() {
     if (spinning || result) return;
@@ -215,7 +219,8 @@ function SpinWheel() {
     setTimeout(() => {
       setSpinning(false);
       setResult(SPIN_PRIZES[idx]);
-      localStorage.setItem("vyra_spin", "1");
+      localStorage.setItem("vyra_spin_v2", "1");
+      setDone(true);
       if (SPIN_PRIZES[idx].code) {
         const cols = ["#15B968", "#0FA88A", "#E0457E", "#FFB84D", "#14201A"];
         setPieces(Array.from({ length: 60 }).map((_, i) => ({
@@ -231,7 +236,22 @@ function SpinWheel() {
     }, 5200);
   }
 
-  if (!open) return null;
+  if (!open) {
+    if (done) return null;
+    return (
+      <button onClick={() => setOpen(true)} aria-label="Gira y gana"
+        className="fixed left-4 bottom-24 sm:bottom-28 z-40 group flex items-center gap-3">
+        <span className="relative flex items-center justify-center w-16 h-16 rounded-full bg-[#15B968] shadow-2xl pulse-ring">
+          <span className="absolute inset-0 rounded-full bg-[#15B968] animate-ping opacity-30" />
+          <span className="text-3xl spin-slow">🎡</span>
+          <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#E0457E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">1</span>
+        </span>
+        <span className="glass rounded-full px-4 py-2 text-sm font-bold shadow-lg whitespace-nowrap hidden sm:block group-hover:scale-105 transition-transform">
+          🎁 ¡Tienes 1 giro <span className="text-[#15B968]">gratis</span>!
+        </span>
+      </button>
+    );
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={close} />
