@@ -162,21 +162,37 @@ function Dashboard() {
           </div>
         )}
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#15B968] text-[#06120B] flex items-center justify-center">
               <LayoutDashboard size={20} />
             </div>
             <div>
               <p className="font-display font-black text-xl">VY<span className="text-[#15B968]">R</span>A · Admin</p>
-              <p className="text-[#14201A]/40 text-xs font-mono">Dashboard · datos demo</p>
+              <p className="text-[#14201A]/40 text-xs font-mono">Panel de control</p>
             </div>
           </div>
-          <a href="./" className="btn-ghost px-5 py-2.5 rounded-full text-sm">← Ver tienda</a>
+          <a href="/vyra-store/" className="btn-ghost px-5 py-2.5 rounded-full text-sm">← Ver tienda</a>
         </div>
 
+        {/* Navegación de secciones */}
+        <div className="glass rounded-full p-1.5 mb-10 flex flex-wrap gap-1 sticky top-3 z-20">
+          {[
+            { id: "resumen", label: "📊 Resumen" },
+            { id: "metricas", label: "📈 Métricas" },
+            { id: "pedidos", label: "🛒 Pedidos" },
+            { id: "cupones", label: "🎟️ Cupones" },
+            { id: "herramientas", label: "🛠️ Herramientas" },
+          ].map((s) => (
+            <a key={s.id} href={`#${s.id}`} className="px-4 py-2 rounded-full text-xs font-medium text-[#14201A]/70 hover:bg-[#15B968]/10 hover:text-[#15B968] transition-colors">
+              {s.label}
+            </a>
+          ))}
+        </div>
+
+        <h2 id="resumen" className="font-display font-black text-xl mb-4 scroll-mt-20">📊 Resumen</h2>
         {/* KPIs */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {kpis.map(({ icon: Icon, label, value, delta, up }, i) => (
             <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }} className="glass rounded-3xl p-6">
@@ -194,6 +210,7 @@ function Dashboard() {
           ))}
         </div>
 
+        <h2 id="metricas" className="font-display font-black text-xl mb-4 mt-12 scroll-mt-20">📈 Métricas</h2>
         {/* Charts row 1 */}
         <div className="grid lg:grid-cols-3 gap-5 mb-6">
           <div className="lg:col-span-2 glass rounded-3xl p-6">
@@ -289,10 +306,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <CouponManager />
-        <WheelCodes />
-        <PricingEngine />
-
+        <h2 id="pedidos" className="font-display font-black text-xl mb-4 mt-12 scroll-mt-20">🛒 Pedidos</h2>
         {/* Orders */}
         <div className="glass rounded-3xl p-6">
           <p className="font-display font-bold mb-5 flex items-center gap-2">
@@ -343,6 +357,13 @@ function Dashboard() {
             </table>
           </div>
         </div>
+
+        <h2 id="cupones" className="font-display font-black text-xl mb-4 mt-12 scroll-mt-20">🎟️ Cupones</h2>
+        <CouponManager />
+        <WheelCodes />
+
+        <h2 id="herramientas" className="font-display font-black text-xl mb-4 mt-12 scroll-mt-20">🛠️ Herramientas</h2>
+        <PricingEngine />
       </div>
     </div>
   );

@@ -531,6 +531,11 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         } catch { /* ignore */ }
       }
       if (promo) await addSubscriber(form.email, "checkout", form.cliente);
+      // Notificación WhatsApp al admin (fire-and-forget)
+      try {
+        const { notifyOrder } = await import("./notify");
+        notifyOrder(data?.id ?? 0, form.cliente, finalTotal, form.pais, applied?.code ?? null);
+      } catch { /* sin notificación si falla */ }
       setOrderId(data?.id ?? null);
       clear();
       setStep("done");
