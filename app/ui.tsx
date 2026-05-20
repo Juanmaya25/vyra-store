@@ -459,28 +459,36 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     const code = coupon.trim().toUpperCase();
     if (!code) return;
     const isSingle = code.startsWith("RULETA-");
-    // Cupones reutilizables precargados (rápido) — nunca los de ruleta
-    if (!isSingle && coupons[code]) { setApplied({ code, pct: coupons[code] }); setCouponErr(""); return; }
-    // Buscar en Supabase
-    const { getCoupon } = await import("./supabase");
-    const c = await getCoupon(code);
-    if (!c) { setApplied(null); setCouponErr("Cupón inválido"); return; }
-    const single = isSingle || !!c.single_use;
-    if (single && (c.used || usedLocally(code))) {
-      setApplied(null); setCouponErr("Este código ya fue usado"); return;
+    let pct: number | null = null;
+    let single = isSingle;
+
+    if (!isSingle && coupons[code] !== undefined) {
+      // Cupones reutilizables precargados (descuento conocido)
+      pct = coupons[code];
+    } else {
+      // Buscar en Supabase
+      const { getCoupon } = await import("./supabase");
+      const c = await getCoupon(code);
+      if (!c) { setApplied(null); setCouponErr("Cupón inválido"); return; }
+      single = isSingle || !!c.single_use;
+      if (single && (c.used || usedLocally(code))) {
+        setApplied(null); setCouponErr("Este código ya fue usado"); return;
+      }
+      if (c.expires_at && Date.parse(c.expires_at) < Date.now()) {
+        setApplied(null); setCouponErr("Este código caducó. ¡Gira en una próxima visita!"); return;
+      }
+      pct = c.percent;
     }
-    if (c.expires_at && Date.parse(c.expires_at) < Date.now()) {
-      setApplied(null); setCouponErr("Este código caducó. ¡Gira en una próxima visita!"); return;
-    }
-    // 1 uso por cliente: si tenemos su correo, verificar pedidos anteriores
+
+    // 1 uso por cliente (SIEMPRE, también para cupones reutilizables del admin)
     const knownEmail = (user?.email || form.email || "").toLowerCase().trim();
     if (knownEmail) {
       const { emailUsedCoupon } = await import("./supabase");
       if (await emailUsedCoupon(knownEmail, code)) {
-        setApplied(null); setCouponErr("Ya usaste este código en una compra anterior"); return;
+        setApplied(null); setCouponErr("Ya usaste este código en una compra anterior. Solo 1 uso por cliente."); return;
       }
     }
-    setApplied({ code: c.code, pct: c.percent, single }); setCouponErr("");
+    setApplied({ code, pct, single }); setCouponErr("");
   }
 
   useEffect(() => {
