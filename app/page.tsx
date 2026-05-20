@@ -182,7 +182,7 @@ export default function Page() {
           {[
             { icon: Truck, t: "Envío Colombia + USA", d: "Despacho en 48h, tracking en tiempo real" },
             { icon: ShieldCheck, t: "Garantía VYRA 30 días", d: "Devolución sin preguntas incómodas" },
-            { icon: RefreshCw, t: "Pago contra entrega", d: "Disponible en Colombia, paga al recibir" },
+            { icon: RefreshCw, t: "Compra 100% segura", d: "Datos cifrados y pago protegido por pasarela" },
             { icon: Zap, t: "Productos validados", d: "Solo lo que tiene rating real 4.5★+" },
           ].map(({ icon: Icon, t, d }, i) => (
             <div key={t} className="reveal glass rounded-3xl p-6" style={{ transitionDelay: `${i * 70}ms` }}>

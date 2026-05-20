@@ -611,7 +611,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <button type="submit" disabled={sending} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-60">
                   {sending ? "Registrando..." : <>Confirmar pedido <ChevronRight size={18} /></>}
                 </button>
-                <p className="text-center text-[#14201A]/35 text-xs font-mono">Te contactaremos para coordinar el pago (Wompi · Stripe · contra entrega)</p>
+                <p className="text-center text-[#14201A]/35 text-xs font-mono">Te contactaremos para coordinar el pago (Wompi · Stripe · PSE)</p>
               </form>
             )}
 
@@ -678,7 +678,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <button onClick={() => setStep("checkout")} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2">
                   Finalizar compra <ChevronRight size={18} />
                 </button>
-                <p className="text-center text-[#14201A]/35 text-xs mt-3 font-mono">Pago seguro · Wompi · Stripe · Contra entrega</p>
+                <p className="text-center text-[#14201A]/35 text-xs mt-3 font-mono">Pago seguro · Wompi · Stripe · PSE</p>
               </div>
             )}
           </motion.div>
@@ -777,7 +777,7 @@ export function SocialProof() {
 const FAQS = [
   ["¿A qué países envían?", "Enviamos a Colombia, USA, México, España, Chile, Perú, Argentina y Brasil, con seguimiento en tiempo real."],
   ["¿Cuánto tarda el envío?", "Colombia 3-7 días hábiles, internacional 7-14 días. Despacho dentro de las 48h tras confirmar el pedido."],
-  ["¿Puedo pagar contra entrega?", "Sí, disponible en las principales ciudades de Colombia. Pagas en efectivo al recibir."],
+  ["¿Qué métodos de pago aceptan?", "Aceptamos tarjetas (Visa, Mastercard), PSE, Nequi y Bancolombia a través de Wompi para Colombia, y Stripe/PayPal para pagos internacionales."],
   ["¿Tienen garantía?", "Sí, Garantía VYRA de 30 días. Si hay defecto de fábrica, cambiamos o devolvemos tu dinero."],
   ["¿Las reseñas son reales?", "Sí, importamos las calificaciones y reseñas reales verificadas de los productos."],
 ];

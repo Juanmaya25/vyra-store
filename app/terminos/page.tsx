@@ -12,7 +12,7 @@ export default function Terminos() {
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">2. Pedidos</h2>
       <p>Una vez confirmado el pago, recibirás un correo con el detalle de tu pedido. El despacho se realiza dentro de las 48 horas hábiles siguientes.</p>
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">3. Pagos</h2>
-      <p>Aceptamos pagos a través de pasarelas seguras (Wompi, Stripe) y pago contra entrega en Colombia donde esté disponible.</p>
+      <p>Aceptamos pagos a través de pasarelas seguras (Wompi, Stripe, PayPal) con tarjetas, PSE, Nequi y Bancolombia.</p>
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">4. Propiedad intelectual</h2>
       <p>Todo el contenido, marca y diseño de VYRA es propiedad de la tienda y no puede reproducirse sin autorización.</p>
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">5. Contacto</h2>

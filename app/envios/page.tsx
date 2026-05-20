@@ -12,8 +12,8 @@ export default function Envios() {
       <p><strong className="text-[#15B968]">Estados Unidos:</strong> 7 a 14 días hábiles según el destino.</p>
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">2. Costos de envío</h2>
       <p>Envío gratis en pedidos superiores a $120 USD. Para pedidos menores, el costo se calcula al finalizar la compra según tu ubicación.</p>
-      <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">3. Pago contra entrega</h2>
-      <p>Disponible en las principales ciudades de Colombia. Pagas en efectivo al recibir tu pedido.</p>
+      <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">3. Empaque y cuidado</h2>
+      <p>Todos los pedidos viajan en empaque protegido para llegar en perfecto estado.</p>
       <h2 className="font-display font-bold text-[#14201A] text-lg pt-4">4. Seguimiento</h2>
       <p>Una vez despachado tu pedido, recibirás un número de guía para rastrear tu envío en todo momento.</p>
       <p className="text-[#14201A]/35 text-xs font-mono pt-6">Última actualización: mayo 2026</p>
