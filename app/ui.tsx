@@ -831,20 +831,18 @@ export function Newsletter() {
 /* ── Offer banner with countdown ── */
 export function OfferBanner() {
   const [t, setT] = useState({ h: 0, m: 0, s: 0 });
+  const [expired, setExpired] = useState(false);
   useEffect(() => {
-    const SIX_H = 6 * 60 * 60 * 1000;
-    let end = Number(localStorage.getItem("vyra_flash_end"));
-    if (!end || end < Date.now()) {
-      end = Date.now() + SIX_H;
-      localStorage.setItem("vyra_flash_end", String(end));
+    // Misma ventana de 6h desde el primer ingreso del cliente (igual que la ruleta).
+    let fv = Number(localStorage.getItem("vyra_first_visit"));
+    if (!fv || isNaN(fv)) {
+      fv = Date.now();
+      localStorage.setItem("vyra_first_visit", String(fv));
     }
+    const end = fv + 6 * 60 * 60 * 1000;
     const tick = () => {
-      let diff = Math.max(0, end - Date.now());
-      if (diff === 0) { // reinicia un nuevo ciclo de 6h
-        end = Date.now() + SIX_H;
-        localStorage.setItem("vyra_flash_end", String(end));
-        diff = SIX_H;
-      }
+      const diff = end - Date.now();
+      if (diff <= 0) { setExpired(true); return; }
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
@@ -855,6 +853,7 @@ export function OfferBanner() {
     return () => clearInterval(iv);
   }, []);
   const pad = (n: number) => String(n).padStart(2, "0");
+  if (expired) return null;
   return (
     <div className="relative z-10 max-w-7xl mx-auto px-6 pt-6">
       <div className="glass rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-l-4 border-[#15B968]">
