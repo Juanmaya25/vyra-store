@@ -461,6 +461,13 @@ function WheelCodes() {
   type WCoupon = { id?: number; code: string; percent: number; single_use?: boolean; used?: boolean; expires_at?: string | null; created_at?: string };
   const [list, setList] = useState<WCoupon[]>([]);
 
+  const [now, setNow] = useState(0);
+  useEffect(() => {
+    setNow(Date.now());
+    const iv = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(iv);
+  }, []);
+
   async function load() {
     const { listCoupons } = await import("../supabase");
     const all = await listCoupons();
@@ -470,12 +477,12 @@ function WheelCodes() {
 
   const total = list.length;
   const used = list.filter((c) => c.used).length;
-  const expired = list.filter((c) => c.expires_at && Date.parse(c.expires_at) < Date.now() && !c.used).length;
+  const expired = list.filter((c) => c.expires_at && Date.parse(c.expires_at) < now && !c.used).length;
   const active = total - used - expired;
 
   function statusOf(c: WCoupon) {
     if (c.used) return { label: "Usado", cls: "text-[#0FA88A] bg-[#0FA88A]/10" };
-    if (c.expires_at && Date.parse(c.expires_at) < Date.now()) return { label: "Caducado", cls: "text-[#14201A]/45 bg-black/5" };
+    if (c.expires_at && Date.parse(c.expires_at) < now) return { label: "Caducado", cls: "text-[#14201A]/45 bg-black/5" };
     return { label: "Disponible", cls: "text-[#15B968] bg-[#15B968]/10" };
   }
 
