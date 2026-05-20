@@ -36,6 +36,18 @@ export async function markCouponUsed(code: string) {
   } catch { /* ignore */ }
 }
 
+export async function emailUsedCoupon(email: string, code: string): Promise<boolean> {
+  if (!email || !code) return false;
+  try {
+    const { count } = await supabase
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("email", email.toLowerCase().trim())
+      .eq("coupon", code.toUpperCase().trim());
+    return (count ?? 0) > 0;
+  } catch { return false; }
+}
+
 export async function deleteCoupon(id: number): Promise<boolean> {
   try {
     const { error } = await supabase.from("coupons").delete().eq("id", id);

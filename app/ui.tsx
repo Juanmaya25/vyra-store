@@ -420,6 +420,14 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     if (single && (c.used || usedLocally(code))) {
       setApplied(null); setCouponErr("Este código ya fue usado"); return;
     }
+    // 1 uso por cliente: si tenemos su correo, verificar pedidos anteriores
+    const knownEmail = (user?.email || form.email || "").toLowerCase().trim();
+    if (knownEmail) {
+      const { emailUsedCoupon } = await import("./supabase");
+      if (await emailUsedCoupon(knownEmail, code)) {
+        setApplied(null); setCouponErr("Ya usaste este código en una compra anterior"); return;
+      }
+    }
     setApplied({ code: c.code, pct: c.percent, single }); setCouponErr("");
   }
 
@@ -431,10 +439,20 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     e.preventDefault();
     setSending(true);
     try {
-      const { supabase, addSubscriber } = await import("./supabase");
+      const { supabase, addSubscriber, emailUsedCoupon } = await import("./supabase");
+      const normEmail = form.email.toLowerCase().trim();
+      // Guardia: el mismo correo no puede reusar el mismo cupón en otra compra
+      if (applied?.code) {
+        const already = await emailUsedCoupon(normEmail, applied.code);
+        if (already) {
+          alert(`Ya usaste el cupón ${applied.code} en una compra anterior. Solo se permite 1 uso por cliente.`);
+          setSending(false);
+          return;
+        }
+      }
       const { data, error } = await supabase.from("orders").insert({
         cliente: form.cliente,
-        email: form.email,
+        email: normEmail,
         pais: form.pais,
         items: lines.map((l) => ({ name: l.name, qty: l.qty, variant: l.variant, priceUSD: l.priceUSD })),
         total_usd: finalTotal,
