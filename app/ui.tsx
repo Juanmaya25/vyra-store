@@ -128,7 +128,7 @@ export function Nav({ base = "" }: { base?: string }) {
         <div className="flex whitespace-nowrap marquee">
           {Array(2).fill(0).map((_, k) => (
             <div key={k} className="flex shrink-0">
-              {["Envío gratis desde $120", "Garantía VYRA 30 días", "Colombia + USA", "Pago contra entrega", "Productos curados 2026"].map((t) => (
+              {["Envío gratis desde $120", "Garantía VYRA 30 días", "Colombia + USA", "Productos curados 2026"].map((t) => (
                 <span key={t} className="flex items-center px-6">{t}<span className="ml-6 w-1.5 h-1.5 rounded-full bg-[#06120B]" /></span>
               ))}
             </div>
