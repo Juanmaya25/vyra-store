@@ -820,7 +820,7 @@ export function Newsletter() {
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com"
               className="flex-1 glass rounded-full px-5 py-3.5 text-sm outline-none focus:border-[#15B968]" />
-            <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 10%</button>
+            <button className="btn-lime px-7 py-3.5 rounded-full whitespace-nowrap">Quiero mi 5%</button>
           </form>
         )}
       </div>
