@@ -7,7 +7,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hEWG33zkWc6exp6DvLjf6g_zK10DH93
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-export type Coupon = { id?: number; code: string; percent: number; single_use?: boolean; used?: boolean };
+export type Coupon = { id?: number; code: string; percent: number; single_use?: boolean; used?: boolean; expires_at?: string | null };
 
 export async function listCoupons(): Promise<Coupon[]> {
   try {
@@ -23,9 +23,11 @@ export async function getCoupon(code: string): Promise<Coupon | null> {
   } catch { return null; }
 }
 
-export async function addCoupon(code: string, percent: number, singleUse = false): Promise<boolean> {
+export async function addCoupon(code: string, percent: number, singleUse = false, expiresAt?: Date | null): Promise<boolean> {
   try {
-    const { error } = await supabase.from("coupons").insert({ code: code.toUpperCase().trim(), percent, single_use: singleUse });
+    const row: Record<string, unknown> = { code: code.toUpperCase().trim(), percent, single_use: singleUse };
+    if (expiresAt) row.expires_at = expiresAt.toISOString();
+    const { error } = await supabase.from("coupons").insert(row);
     return !error;
   } catch { return false; }
 }

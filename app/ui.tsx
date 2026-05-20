@@ -185,6 +185,14 @@ const WEEKLY_VARIANTS = [
 ];
 const SEG_COLORS = ["#15B968", "#0B3D2A", "#0FA88A", "#0B3D2A", "#15B968", "#0FA88A"];
 
+function isoWeekStamp(d: Date = new Date()): string {
+  const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  dt.setUTCDate(dt.getUTCDate() + 4 - (dt.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((dt.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${dt.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
 function currentWeekIndex(): number {
   // Semanas transcurridas desde una fecha base, módulo 4 → variante de la semana.
   const EPOCH = Date.UTC(2026, 0, 5); // lunes 5 ene 2026
@@ -210,16 +218,37 @@ function SpinWheel() {
   const [result, setResult] = useState<{ label: string; code: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [pieces, setPieces] = useState<{ left: string; bg: string; delay: string; dur: string; w: string; h: string }[]>([]);
-  const [done, setDone] = useState(true);
+  const [available, setAvailable] = useState(false);
+  const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    const spun = !!localStorage.getItem("vyra_spin_v2");
-    setDone(spun);
-    if (!spun && !sessionStorage.getItem("vyra_spin_seen")) {
-      const t = setTimeout(() => { setOpen(true); sessionStorage.setItem("vyra_spin_seen", "1"); }, 8000);
-      return () => clearTimeout(t);
+    let fv = Number(localStorage.getItem("vyra_first_visit"));
+    if (!fv || isNaN(fv)) {
+      fv = Date.now();
+      localStorage.setItem("vyra_first_visit", String(fv));
     }
+    const deadline = fv + 6 * 3600 * 1000; // 6 horas desde el primer ingreso
+    const refresh = () => {
+      const left = deadline - Date.now();
+      const spunThisWeek = localStorage.getItem("vyra_spin_week") === isoWeekStamp();
+      setRemainingMs(left);
+      setAvailable(left > 0 && !spunThisWeek);
+    };
+    refresh();
+    const iv = setInterval(refresh, 30000);
+    const t = setTimeout(() => {
+      const left = deadline - Date.now();
+      const spunThisWeek = localStorage.getItem("vyra_spin_week") === isoWeekStamp();
+      if (left > 0 && !spunThisWeek && !sessionStorage.getItem("vyra_spin_seen")) {
+        setOpen(true);
+        sessionStorage.setItem("vyra_spin_seen", "1");
+      }
+    }, 8000);
+    return () => { clearInterval(iv); clearTimeout(t); };
   }, []);
+
+  const hoursLeft = Math.max(0, Math.floor(remainingMs / 3600000));
+  const minsLeft = Math.max(0, Math.floor((remainingMs % 3600000) / 60000));
 
   function close() { setOpen(false); }
 
@@ -231,16 +260,19 @@ function SpinWheel() {
     setRot(target);
     setTimeout(async () => {
       setSpinning(false);
-      localStorage.setItem("vyra_spin_v2", "1");
-      setDone(true);
+      localStorage.setItem("vyra_spin_week", isoWeekStamp());
+      setAvailable(false);
       const prize = SPIN_PRIZES[idx];
       if (prize.percent > 0) {
-        // Genera un código único de un solo uso
+        // Código único + caducidad: 6h desde el primer ingreso del usuario
         const rnd = Math.random().toString(36).slice(2, 7).toUpperCase();
         const newCode = `RULETA-${rnd}`;
+        const fv = Number(localStorage.getItem("vyra_first_visit")) || Date.now();
+        const expiresAt = new Date(fv + 6 * 3600 * 1000);
+        localStorage.setItem("vyra_spin_expires", String(expiresAt.getTime()));
         try {
           const { addCoupon } = await import("./supabase");
-          await addCoupon(newCode, prize.percent, true);
+          await addCoupon(newCode, prize.percent, true, expiresAt);
         } catch { /* si falla, igual se muestra el código */ }
         setResult({ label: prize.label, code: newCode });
         const cols = ["#15B968", "#0FA88A", "#E0457E", "#FFB84D", "#14201A"];
@@ -260,7 +292,8 @@ function SpinWheel() {
   }
 
   if (!open) {
-    if (done) return null;
+    if (!available) return null;
+    const timeLeft = hoursLeft > 0 ? `${hoursLeft}h ${minsLeft}m` : `${minsLeft}m`;
     return (
       <button onClick={() => setOpen(true)} aria-label="Gira y gana"
         className="fixed left-4 bottom-24 sm:bottom-28 z-40 group flex items-center gap-3">
@@ -269,8 +302,9 @@ function SpinWheel() {
           <span className="text-3xl wheel-hover">🎡</span>
           <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#E0457E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">1</span>
         </span>
-        <span className="glass rounded-full px-4 py-2 text-sm font-bold shadow-lg whitespace-nowrap hidden sm:block group-hover:scale-105 transition-transform">
-          🎁 ¡Tienes 1 giro <span className="text-[#15B968]">gratis</span>!
+        <span className="glass rounded-2xl px-4 py-2 shadow-lg whitespace-nowrap hidden sm:flex flex-col items-start group-hover:scale-105 transition-transform">
+          <span className="text-sm font-bold">🎁 ¡Tienes 1 giro <span className="text-[#15B968]">gratis</span>!</span>
+          <span className="text-[10px] font-mono text-[#E0457E]">⏰ caduca en {timeLeft}</span>
         </span>
       </button>
     );
@@ -295,7 +329,8 @@ function SpinWheel() {
           🎁 Solo hoy
         </div>
         <h2 className="font-display font-black text-3xl leading-tight">Gira y <span className="grad">gana</span></h2>
-        <p className="text-[#14201A]/50 text-sm mt-2 mb-7">Tienes <strong>1 giro gratis</strong>. ¡La suerte está echada!</p>
+        <p className="text-[#14201A]/50 text-sm mt-2 mb-2">Tienes <strong>1 giro gratis por semana</strong>. ¡La suerte está echada!</p>
+        <p className="text-[#E0457E] text-xs font-mono mb-6">⏰ El premio caduca en {hoursLeft}h {minsLeft}m</p>
 
         <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto mb-8">
           {/* Pointer */}
@@ -433,6 +468,9 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     const single = isSingle || !!c.single_use;
     if (single && (c.used || usedLocally(code))) {
       setApplied(null); setCouponErr("Este código ya fue usado"); return;
+    }
+    if (c.expires_at && Date.parse(c.expires_at) < Date.now()) {
+      setApplied(null); setCouponErr("Este código caducó. ¡Gira en una próxima visita!"); return;
     }
     // 1 uso por cliente: si tenemos su correo, verificar pedidos anteriores
     const knownEmail = (user?.email || form.email || "").toLowerCase().trim();
