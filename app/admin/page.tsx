@@ -290,6 +290,7 @@ function Dashboard() {
         </div>
 
         <CouponManager />
+        <WheelCodes />
         <PricingEngine />
 
         {/* Orders */}
@@ -394,14 +395,16 @@ function PricingEngine() {
 }
 
 function CouponManager() {
-  const [list, setList] = useState<{ id?: number; code: string; percent: number }[]>([]);
+  const [list, setList] = useState<{ id?: number; code: string; percent: number; single_use?: boolean }[]>([]);
   const [code, setCode] = useState("");
   const [percent, setPercent] = useState(10);
   const [busy, setBusy] = useState(false);
 
   async function load() {
     const { listCoupons } = await import("../supabase");
-    setList(await listCoupons());
+    const all = await listCoupons();
+    // Solo cupones creados por admin (reutilizables, no de ruleta)
+    setList(all.filter((c) => !c.single_use));
   }
   useEffect(() => { load(); }, []);
 
@@ -450,6 +453,83 @@ function CouponManager() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function WheelCodes() {
+  type WCoupon = { id?: number; code: string; percent: number; single_use?: boolean; used?: boolean; expires_at?: string | null; created_at?: string };
+  const [list, setList] = useState<WCoupon[]>([]);
+
+  async function load() {
+    const { listCoupons } = await import("../supabase");
+    const all = await listCoupons();
+    setList(all.filter((c) => c.single_use));
+  }
+  useEffect(() => { load(); }, []);
+
+  const total = list.length;
+  const used = list.filter((c) => c.used).length;
+  const expired = list.filter((c) => c.expires_at && Date.parse(c.expires_at) < Date.now() && !c.used).length;
+  const active = total - used - expired;
+
+  function statusOf(c: WCoupon) {
+    if (c.used) return { label: "Usado", cls: "text-[#0FA88A] bg-[#0FA88A]/10" };
+    if (c.expires_at && Date.parse(c.expires_at) < Date.now()) return { label: "Caducado", cls: "text-[#14201A]/45 bg-black/5" };
+    return { label: "Disponible", cls: "text-[#15B968] bg-[#15B968]/10" };
+  }
+
+  return (
+    <div className="glass rounded-3xl p-6 mb-6">
+      <p className="font-display font-bold mb-1 flex items-center gap-2">🎡 Códigos emitidos por la ruleta</p>
+      <p className="text-[#14201A]/40 text-xs font-mono mb-5">Códigos únicos de un solo uso. Vista de monitoreo (no editable).</p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        {[
+          { label: "Total", value: total, color: "text-[#14201A]" },
+          { label: "Disponibles", value: active, color: "text-[#15B968]" },
+          { label: "Usados", value: used, color: "text-[#0FA88A]" },
+          { label: "Caducados", value: expired, color: "text-[#14201A]/45" },
+        ].map((k) => (
+          <div key={k.label} className="glass rounded-2xl p-3 text-center">
+            <p className={`font-display font-black text-2xl ${k.color}`}>{k.value}</p>
+            <p className="text-[#14201A]/45 text-xs">{k.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {list.length === 0 ? (
+        <p className="text-[#14201A]/45 text-sm">Aún no se han emitido códigos por la ruleta.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-[#14201A]/40 font-mono text-xs uppercase tracking-wider border-b border-[var(--line)]">
+                <th className="text-left pb-3 font-normal">Código</th>
+                <th className="text-left pb-3 font-normal">Descuento</th>
+                <th className="text-left pb-3 font-normal">Generado</th>
+                <th className="text-left pb-3 font-normal">Caduca</th>
+                <th className="text-left pb-3 font-normal">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.slice(0, 30).map((c) => {
+                const s = statusOf(c);
+                return (
+                  <tr key={c.id} className="border-b border-[var(--line)] last:border-0">
+                    <td className="py-3 font-mono text-[#15B968]">{c.code}</td>
+                    <td className="py-3 font-mono">{c.percent}%</td>
+                    <td className="py-3 text-[#14201A]/60 text-xs">{c.created_at ? new Date(c.created_at).toLocaleString("es-CO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+                    <td className="py-3 text-[#14201A]/60 text-xs">{c.expires_at ? new Date(c.expires_at).toLocaleString("es-CO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+                    <td className="py-3"><span className={`px-3 py-1 rounded-full text-xs font-medium ${s.cls}`}>{s.label}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {list.length > 30 && <p className="text-[#14201A]/40 text-xs font-mono mt-3">Mostrando los 30 más recientes ({list.length} totales).</p>}
+        </div>
+      )}
     </div>
   );
 }
