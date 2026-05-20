@@ -172,14 +172,27 @@ export function Nav({ base = "" }: { base?: string }) {
   );
 }
 
-const SPIN_PRIZES = [
-  { label: "5% OFF", percent: 5, color: "#15B968" },
-  { label: "Sigue", percent: 0, color: "#0B3D2A" },
-  { label: "8% OFF", percent: 8, color: "#0FA88A" },
-  { label: "7% OFF", percent: 7, color: "#0B3D2A" },
-  { label: "10% OFF", percent: 10, color: "#15B968" },
-  { label: "Casi...", percent: 0, color: "#0FA88A" },
+// La ruleta rota sus premios cada semana (4 variantes que se ciclan)
+const WEEKLY_VARIANTS = [
+  [ { label: "5% OFF", percent: 5 }, { label: "Sigue", percent: 0 }, { label: "8% OFF", percent: 8 },
+    { label: "7% OFF", percent: 7 }, { label: "10% OFF", percent: 10 }, { label: "Casi...", percent: 0 } ],
+  [ { label: "6% OFF", percent: 6 }, { label: "Sigue", percent: 0 }, { label: "9% OFF", percent: 9 },
+    { label: "10% OFF", percent: 10 }, { label: "8% OFF", percent: 8 }, { label: "Casi...", percent: 0 } ],
+  [ { label: "5% OFF", percent: 5 }, { label: "Casi...", percent: 0 }, { label: "7% OFF", percent: 7 },
+    { label: "9% OFF", percent: 9 }, { label: "10% OFF", percent: 10 }, { label: "Sigue", percent: 0 } ],
+  [ { label: "8% OFF", percent: 8 }, { label: "Sigue", percent: 0 }, { label: "10% OFF", percent: 10 },
+    { label: "6% OFF", percent: 6 }, { label: "7% OFF", percent: 7 }, { label: "Casi...", percent: 0 } ],
 ];
+const SEG_COLORS = ["#15B968", "#0B3D2A", "#0FA88A", "#0B3D2A", "#15B968", "#0FA88A"];
+
+function currentWeekIndex(): number {
+  // Semanas transcurridas desde una fecha base, módulo 4 → variante de la semana.
+  const EPOCH = Date.UTC(2026, 0, 5); // lunes 5 ene 2026
+  const week = Math.floor((Date.now() - EPOCH) / (7 * 24 * 3600 * 1000));
+  return ((week % WEEKLY_VARIANTS.length) + WEEKLY_VARIANTS.length) % WEEKLY_VARIANTS.length;
+}
+
+const SPIN_PRIZES = WEEKLY_VARIANTS[currentWeekIndex()].map((p, i) => ({ ...p, color: SEG_COLORS[i] }));
 const SEG = 360 / SPIN_PRIZES.length;
 
 function slicePath(i: number) {
@@ -377,6 +390,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const [promo, setPromo] = useState(true);
   const [sending, setSending] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
+  const [orderErr, setOrderErr] = useState("");
   const [coupon, setCoupon] = useState("");
   const [applied, setApplied] = useState<{ code: string; pct: number; single?: boolean } | null>(null);
   const [couponErr, setCouponErr] = useState("");
@@ -438,6 +452,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   async function placeOrder(e: React.FormEvent) {
     e.preventDefault();
     setSending(true);
+    setOrderErr("");
     try {
       const { supabase, addSubscriber, emailUsedCoupon } = await import("./supabase");
       const normEmail = form.email.toLowerCase().trim();
@@ -445,7 +460,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
       if (applied?.code) {
         const already = await emailUsedCoupon(normEmail, applied.code);
         if (already) {
-          alert(`Ya usaste el cupón ${applied.code} en una compra anterior. Solo se permite 1 uso por cliente.`);
+          setOrderErr(`El cupón ${applied.code} ya fue usado con este correo. Cada cupón permite un solo uso por cliente.`);
           setSending(false);
           return;
         }
@@ -474,7 +489,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
       clear();
       setStep("done");
     } catch {
-      alert("No se pudo registrar el pedido. Revisa que el esquema SQL se haya ejecutado en Supabase.");
+      setOrderErr("No pudimos registrar tu pedido. Verifica tu conexión e inténtalo de nuevo.");
     } finally {
       setSending(false);
     }
@@ -541,6 +556,12 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                   <span className="text-[#14201A]/55">Total a pagar {applied && <span className="text-[#15B968] text-xs">({applied.code})</span>}</span>
                   <span className="font-display font-bold">{fmt(finalTotal, cur)}</span>
                 </div>
+                {orderErr && (
+                  <div className="rounded-xl px-4 py-3 border border-[#E0457E]/30 bg-[#E0457E]/8 flex items-start gap-3 text-sm">
+                    <span className="text-[#E0457E] text-lg leading-none">⚠</span>
+                    <p className="text-[#14201A]/80 leading-snug">{orderErr}</p>
+                  </div>
+                )}
                 <button type="submit" disabled={sending} className="btn-lime w-full py-4 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-60">
                   {sending ? "Registrando..." : <>Confirmar pedido <ChevronRight size={18} /></>}
                 </button>
